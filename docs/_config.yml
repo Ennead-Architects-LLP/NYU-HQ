@@ -1,0 +1,26 @@
+# Site settings
+title: NYU-HQ
+description: NYU-HQ GitHub Pages Site
+baseurl: "/NYU-HQ"
+url: "https://szhang.github.io"
+
+# Build settings
+theme: jekyll-theme-cayman
+markdown: kramdown
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+# Exclude from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+
+# Collections
+collections:
+  posts:
+    output: true
+    permalink: /blog/:year/:month/:day/:title/
+
