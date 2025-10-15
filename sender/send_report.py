@@ -12,6 +12,7 @@ from pathlib import Path
 import urllib.request
 import urllib.error
 from datetime import datetime
+import ctypes
 
 
 def get_script_dir():
@@ -191,66 +192,97 @@ def update_github_file(html_content, config):
         return False
 
 
+def show_notification(title, message, icon_type=0):
+    """Placeholder for notifications (disabled for silent operation)."""
+    pass  # Completely silent - no popups
+
+
 def main():
     """Main execution function."""
-    print("=" * 60)
-    print("HTML Report Sender")
-    print("=" * 60)
+    is_frozen = getattr(sys, 'frozen', False)
+    
+    if not is_frozen:
+        print("=" * 60)
+        print("HTML Report Sender")
+        print("=" * 60)
     
     try:
         # Step 1: Read configuration
-        print("\n1. Reading configuration...")
+        if not is_frozen:
+            print("\n1. Reading configuration...")
         config = read_config()
-        print(f"   Repository: {config['repo_owner']}/{config['repo_name']}")
+        if not is_frozen:
+            print(f"   Repository: {config['repo_owner']}/{config['repo_name']}")
         
         # Step 2: Get reports folder path
-        print("\n2. Locating reports folder...")
+        if not is_frozen:
+            print("\n2. Locating reports folder...")
         reports_folder = get_reports_folder()
-        print(f"   Reports folder: {reports_folder}")
+        if not is_frozen:
+            print(f"   Reports folder: {reports_folder}")
         
         # Step 3: Find latest HTML file
-        print("\n3. Finding latest HTML file...")
+        if not is_frozen:
+            print("\n3. Finding latest HTML file...")
         latest_html = find_latest_html(reports_folder)
         mod_time = datetime.fromtimestamp(latest_html.stat().st_mtime)
-        print(f"   Latest file: {latest_html.name}")
-        print(f"   Modified: {mod_time.strftime('%Y-%m-%d %H:%M:%S')}")
+        if not is_frozen:
+            print(f"   Latest file: {latest_html.name}")
+            print(f"   Modified: {mod_time.strftime('%Y-%m-%d %H:%M:%S')}")
         
         # Step 4: Read HTML content
-        print("\n4. Reading HTML content...")
+        if not is_frozen:
+            print("\n4. Reading HTML content...")
         html_content = read_html_content(latest_html)
-        print(f"   File size: {len(html_content):,} bytes")
+        if not is_frozen:
+            print(f"   File size: {len(html_content):,} bytes")
         
         # Step 5: Upload to GitHub
-        print("\n5. Updating GitHub repository...")
+        if not is_frozen:
+            print("\n5. Updating GitHub repository...")
         success = update_github_file(html_content, config)
         
         if success:
-            print("\n" + "=" * 60)
-            print("SUCCESS! The HTML report has been updated in the repository.")
-            print("=" * 60)
+            if not is_frozen:
+                print("\n" + "=" * 60)
+                print("SUCCESS! The HTML report has been updated in the repository.")
+                print("=" * 60)
+            else:
+                # Show success notification when running as exe
+                show_notification(
+                    "NYU-HQ Report Sender",
+                    f"Successfully uploaded {latest_html.name}\n({len(html_content):,} bytes)\n\nUpdated: {mod_time.strftime('%Y-%m-%d %H:%M:%S')}",
+                    1  # Info icon
+                )
             return 0
         else:
-            print("\n" + "=" * 60)
-            print("FAILED! Please check the error messages above.")
-            print("=" * 60)
+            if not is_frozen:
+                print("\n" + "=" * 60)
+                print("FAILED! Please check the error messages above.")
+                print("=" * 60)
+            else:
+                show_notification(
+                    "NYU-HQ Report Sender - Error",
+                    "Failed to upload report.\nPlease check your internet connection.",
+                    2  # Warning icon
+                )
             return 1
             
     except Exception as e:
-        print(f"\n[ERROR] {e}")
-        print("\n" + "=" * 60)
-        print("FAILED!")
-        print("=" * 60)
+        if not is_frozen:
+            print(f"\n[ERROR] {e}")
+            print("\n" + "=" * 60)
+            print("FAILED!")
+            print("=" * 60)
+        else:
+            show_notification(
+                "NYU-HQ Report Sender - Error",
+                f"Error: {str(e)[:200]}",
+                3  # Error icon
+            )
         return 1
 
 
 if __name__ == "__main__":
     exit_code = main()
-    
-    # If running as compiled exe, pause before closing
-    if getattr(sys, 'frozen', False):
-        try:
-            input("\nPress Enter to exit...")
-        except (EOFError, KeyboardInterrupt):
-            pass
-    
     sys.exit(exit_code)

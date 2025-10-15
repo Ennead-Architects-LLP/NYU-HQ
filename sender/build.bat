@@ -38,8 +38,8 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo [3/4] Compiling to executable...
-python -m PyInstaller --onefile --name send_report --console --clean send_report_build.py
+echo [3/4] Compiling to executable (no console)...
+python -m PyInstaller --onefile --name send_report --noconsole --clean send_report_build.py
 if errorlevel 1 (
     echo [ERROR] Failed to compile
     pause
