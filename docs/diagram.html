@@ -101,7 +101,7 @@
 
         <div class="diagram">
             <div class="svg-wrap">
-                <svg viewBox="0 0 1200 520" role="img" aria-label="Data flow diagram">
+                <svg viewBox="0 0 1200 700" role="img" aria-label="Data flow diagram">
                     <defs>
                         <marker id="arrowHeadV" markerWidth="4" markerHeight="4" refX="3.2" refY="2" orient="auto" markerUnits="strokeWidth">
                             <path d="M0,0 L3,2 L0,4" fill="none" stroke="currentColor" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -118,7 +118,7 @@
                         </g>
                     </g>
 
-                    <g class="node" transform="translate(450,40)">
+                    <g class="node" transform="translate(450,-20)">
                         <rect width="300" height="140" rx="10" ry="10" fill="#111827" stroke="#374151" stroke-width="2"></rect>
                         <g fill="#e5e7eb" font-size="16" font-weight="600">
                             <text x="20" y="46">Website Report</text>
@@ -136,7 +136,7 @@
                         </g>
                     </g>
 
-                    <g class="node" transform="translate(420,360)">
+                    <g class="node" transform="translate(420,420)">
                         <rect width="360" height="130" rx="10" ry="10" fill="#111827" stroke="#374151" stroke-width="2"></rect>
                         <g fill="#e5e7eb" font-size="16" font-weight="600">
                             <text x="20" y="46">Feedback &amp; Write-back</text>
@@ -148,13 +148,13 @@
                     <!-- Flows (animated) -->
                     <!-- Excel -> Report (from Excel right edge center to Report bottom center) -->
                     <!-- Left side up-and-over to Report (rounded corner) -->
-                    <path class="arrow a-extract link-animated" style="stroke:#60a5fa;color:#60a5fa" marker-end="url(#arrowHeadV)" d="M260,200 C260,140 300,100 450,100" fill="none" stroke-width="5"/>
-                    <text class="arrow-label" x="90" y="90" fill="#60a5fa" font-size="13">Extract Target Areas, Color, Department, Division, Room</text>
+                    <path class="arrow a-extract link-animated" style="stroke:#60a5fa;color:#60a5fa" marker-end="url(#arrowHeadV)" d="M260,200 C260,140 300,50 450,50" fill="none" stroke-width="5"/>
+                    <text class="arrow-label" x="-10" y="90" fill="#60a5fa" font-size="13">Extract Target Areas, Color, Department, Division, Room</text>
 
                     <!-- Revit -> Report (from Revit left edge center to Report bottom center) -->
                     <!-- Right side up-and-over to Report (rounded corner) -->
-                    <path class="arrow a-compare link-animated" style="stroke:#22d3ee;color:#22d3ee" marker-end="url(#arrowHeadV)" d="M940,200 C940,140 900,100 750,100" fill="none" stroke-width="5"/>
-                    <text class="arrow-label" x="810" y="90" fill="#22d3ee" font-size="13">Extract Actual Areas</text>
+                    <path class="arrow a-compare link-animated" style="stroke:#22d3ee;color:#22d3ee" marker-end="url(#arrowHeadV)" d="M940,200 C940,140 900,50 750,50" fill="none" stroke-width="5"/>
+                    <text class="arrow-label" x="910" y="90" fill="#22d3ee" font-size="13">Extract Actual Areas</text>
 
                     <!-- Report -> Feedback (vertical down, bottom center to top center) -->
                     <path class="arrow a-report link-animated" style="stroke:#10b981;color:#10b981" marker-end="url(#arrowHeadV)" d="M600,180 C600,220 600,300 600,360" fill="none" stroke-width="5"/>
@@ -162,13 +162,13 @@
 
                     <!-- Feedback -> Excel (valid) from left edge center to Excel bottom center -->
                     <!-- Feedback to Excel: leftward then curve up into bottom center -->
-                    <path class="arrow a-feedback link-animated" style="stroke:#b99d10;color:#b99d10;stroke-dasharray:6 10" marker-end="url(#arrowHeadV)" d="M420,425 C360,425 310,410 280,390 C270,380 265,365 260,340" fill="none" stroke-width="5"/>
-                    <text class="arrow-label" x="200" y="440" fill="#b99d10" font-size="13">Write Valid Areas To Excel</text>
+                    <path class="arrow a-feedback link-animated" style="stroke:#b99d10;color:#b99d10;stroke-dasharray:6 10" marker-end="url(#arrowHeadV)" d="M420,500 C380,500  260,460 260,340" fill="none" stroke-width="5"/>
+                    <text class="arrow-label" x="100" y="440" fill="#b99d10" font-size="13">Write Valid Areas To Excel</text>
 
                     <!-- Feedback -> Revit (invalid) from right edge center to Revit bottom center -->
                     <!-- Feedback to Revit: rightward then curve up into bottom center -->
-                    <path class="arrow a-feedback link-animated" style="stroke:#a78bfa;color:#a78bfa;stroke-dasharray:6 10" marker-end="url(#arrowHeadV)" d="M780,425 C840,425 890,410 920,390 C930,380 935,365 940,340" fill="none" stroke-width="5"/>
-                    <text class="arrow-label" x="880" y="440" fill="#a78bfa" font-size="13">Suggestion Corrections to Revit</text>
+                    <path class="arrow a-feedback link-animated" style="stroke:#a78bfa;color:#a78bfa;stroke-dasharray:6 10" marker-end="url(#arrowHeadV)" d="M780,500 C840,500 940,460 940,340" fill="none" stroke-width="5"/>
+                    <text class="arrow-label" x="930" y="440" fill="#a78bfa" font-size="13">Suggestion Corrections to Revit</text>
                 </svg>
             </div>
 
