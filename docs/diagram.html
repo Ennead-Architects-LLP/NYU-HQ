@@ -73,7 +73,7 @@
 
         <div class="diagram">
             <div class="svg-wrap">
-                <svg viewBox="0 0 1200 700" role="img" aria-label="Data flow diagram">
+                <svg viewBox="0 -200 1200 900" role="img" aria-label="Data flow diagram">
                     <defs>
                         <marker id="arrowHeadV" markerWidth="4" markerHeight="4" refX="3.2" refY="2" orient="auto" markerUnits="strokeWidth">
                             <path d="M0,0 L3,2 L0,4" fill="none" stroke="currentColor" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -91,10 +91,18 @@
                         </g>
                     </g>
 
+                    <g class="node" transform="translate(450,-300)">
+                        <rect width="300" height="120" rx="10" ry="10" fill="#111827" stroke="#374151" stroke-width="2"></rect>
+                        <g fill="#e5e7eb" font-size="16" font-weight="600">
+                            <text x="20" y="46">Remote Website Data Dashboard</text>
+                            <text x="20" y="80" font-weight="400" fill="#cbd5e1">GitHub Pages Hosted Report</text>
+                        </g>
+                    </g>
+
                     <g class="node" transform="translate(450,-20)">
                         <rect width="300" height="140" rx="10" ry="10" fill="#111827" stroke="#374151" stroke-width="2"></rect>
                         <g fill="#e5e7eb" font-size="16" font-weight="600">
-                            <text x="20" y="46">Website Report</text>
+                            <text x="20" y="46">Local Website Report</text>
                             <text x="20" y="78" font-weight="400" fill="#cbd5e1">Compare DGSF+ vs Area</text>
                             <text x="20" y="104" font-weight="400" fill="#cbd5e1">Highlight mismatches and target delta</text>
                         </g>
@@ -132,6 +140,10 @@
                     <!-- Report -> Feedback (vertical down, bottom center to top center) -->
                     <path class="arrow a-report link-animated" style="stroke:#10b981;color:#10b981" marker-end="url(#arrowHeadV)" d="M600,120 C600,125 600,300 600,420" fill="none" stroke-width="5"/>
                     <text class="arrow-label" x="610" y="280" fill="#10b981" font-size="13">Generate Website Report</text>
+
+                    <!-- Local Report -> Remote Data (vertical up) -->
+                    <path class="arrow a-upload link-animated" style="stroke:#ec4899;color:#ec4899" marker-end="url(#arrowHeadV)" d="M600,-20 L600,-180" fill="none" stroke-width="5"/>
+                    <text class="arrow-label" x="610" y="-80" fill="#ec4899" font-size="13">Send Data to Github</text>
 
                     <!-- Feedback -> Excel (valid) from left edge center to Excel bottom center -->
                     <!-- Feedback to Excel: leftward then curve up into bottom center -->
