@@ -103,8 +103,8 @@
             <div class="svg-wrap">
                 <svg viewBox="0 0 1200 520" role="img" aria-label="Data flow diagram">
                     <defs>
-                        <marker id="arrowHeadV" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
-                            <path d="M0,0 L10,6 L0,12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <marker id="arrowHeadV" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto" markerUnits="strokeWidth">
+                            <path d="M0,0 L7,4 L0,8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
                         </marker>
                     </defs>
 
@@ -123,7 +123,7 @@
                         <g fill="#e5e7eb" font-size="16" font-weight="600">
                             <text x="20" y="46">Website Report</text>
                             <text x="20" y="78" font-weight="400" fill="#cbd5e1">Compare DGSF+ vs Area</text>
-                            <text x="20" y="104" font-weight="400" fill="#cbd5e1">Highlight mismatches</text>
+                            <text x="20" y="104" font-weight="400" fill="#cbd5e1">Highlight mismatches and target delta</text>
                         </g>
                     </g>
 
@@ -131,7 +131,7 @@
                         <rect width="280" height="140" rx="10" ry="10" fill="#111827" stroke="#374151" stroke-width="2"></rect>
                         <g fill="#e5e7eb" font-size="16" font-weight="600">
                             <text x="20" y="46">Revit Model</text>
-                            <text x="20" y="78" font-weight="400" fill="#cbd5e1">Actual rooms/areas</text>
+                            <text x="20" y="78" font-weight="400" fill="#cbd5e1">Actual areas</text>
                             <text x="20" y="104" font-weight="400" fill="#cbd5e1">Elements, parameters</text>
                         </g>
                     </g>
@@ -149,12 +149,12 @@
                     <!-- Excel -> Report (from Excel right edge center to Report bottom center) -->
                     <!-- Left side up-and-over to Report (rounded corner) -->
                     <path class="arrow a-extract link-animated" style="stroke:#60a5fa;color:#60a5fa" marker-end="url(#arrowHeadV)" d="M260,200 C260,140 410,140 450,140" fill="none" stroke-width="3"/>
-                    <text class="arrow-label" x="350" y="130" fill="#60a5fa" font-size="13">Extract targets</text>
+                    <text class="arrow-label" x="300" y="130" fill="#60a5fa" font-size="13">Extract targets</text>
 
                     <!-- Revit -> Report (from Revit left edge center to Report bottom center) -->
                     <!-- Right side up-and-over to Report (rounded corner) -->
                     <path class="arrow a-compare link-animated" style="stroke:#22d3ee;color:#22d3ee" marker-end="url(#arrowHeadV)" d="M940,200 C940,140 790,140 750,140" fill="none" stroke-width="3"/>
-                    <text class="arrow-label" x="810" y="130" fill="#22d3ee" font-size="13">Extract actuals</text>
+                    <text class="arrow-label" x="810" y="130" fill="#22d3ee" font-size="13">Extract Actual Areas</text>
 
                     <!-- Report -> Feedback (vertical down, bottom center to top center) -->
                     <path class="arrow a-report link-animated" style="stroke:#10b981;color:#10b981" marker-end="url(#arrowHeadV)" d="M600,180 C600,220 600,300 600,360" fill="none" stroke-width="3"/>
@@ -172,12 +172,7 @@
                 </svg>
             </div>
 
-            <div class="legend">
-                <div class="item"><span class="swatch s-extract"></span><span>Extract targets from Master Excel</span></div>
-                <div class="item"><span class="swatch s-compare"></span><span>Extract actuals from Revit model</span></div>
-                <div class="item"><span class="swatch s-report"></span><span>Report writes valid totals to Excel DESIGN</span></div>
-                <div class="item"><span class="swatch s-feedback"></span><span>Report sends invalids/suggestions back to Revit</span></div>
-            </div>
+            <!-- legend removed per request -->
         </div>
 
         <div class="note">
