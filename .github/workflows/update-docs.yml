@@ -1,0 +1,58 @@
+name: Update Documentation with HTML Report
+
+on:
+  workflow_dispatch:
+    inputs:
+      html_content:
+        description: 'Base64 encoded HTML content'
+        required: true
+        type: string
+
+jobs:
+  update-docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      
+      - name: Pull latest changes
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git pull origin main --rebase
+      
+      - name: Decode and write HTML content
+        run: |
+          echo "${{ inputs.html_content }}" | base64 -d > docs/index.html
+          echo "HTML content written to docs/index.html"
+          echo "File size: $(wc -c < docs/index.html) bytes"
+      
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if git diff --quiet docs/index.html; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes detected in docs/index.html"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Changes detected in docs/index.html"
+          fi
+      
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          git add docs/index.html
+          git commit -m "Update docs/index.html with latest report - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          git push origin main
+          echo "✓ Successfully committed and pushed changes"
+      
+      - name: No changes to commit
+        if: steps.check_changes.outputs.changed == 'false'
+        run: |
+          echo "ℹ No changes to commit - HTML content is identical to existing file"
+
