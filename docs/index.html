@@ -6211,5 +6211,34 @@
         }
         
     </script>
+    <script>
+        // Floating quick link to the animated data flow diagram
+        (function(){
+            try {
+                var link = document.createElement('a');
+                link.href = './diagram.html';
+                link.textContent = 'Data Flow Diagram';
+                link.setAttribute('aria-label', 'View Data Flow Diagram');
+                link.style.cssText = [
+                    'position:fixed',
+                    'right:20px',
+                    'bottom:20px',
+                    'z-index:9999',
+                    'background:#1f2937',
+                    'color:#60a5fa',
+                    'border:1px solid #374151',
+                    'padding:10px 14px',
+                    'border-radius:8px',
+                    'text-decoration:none',
+                    'box-shadow:0 8px 24px rgba(0,0,0,0.35)',
+                    'font-family: Roboto, sans-serif',
+                    'font-weight:500'
+                ].join(';');
+                link.onmouseenter = function(){ this.style.color = '#93c5fd'; };
+                link.onmouseleave = function(){ this.style.color = '#60a5fa'; };
+                document.body.appendChild(link);
+            } catch(e) { /* no-op */ }
+        })();
+    </script>
 </body>
 </html>

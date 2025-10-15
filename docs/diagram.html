@@ -58,30 +58,20 @@
         .s-report { background: #10b981; }
         .s-feedback { background: #8b5cf6; }
 
-        .svg-wrap { width: 100%; overflow: hidden; }
-        svg { width: 100%; height: auto; }
+        .mermaid { width: 100%; }
+        .mermaid .edgeLabel { background: transparent; }
+        .mermaid .label { color: #e5e7eb; }
+        .mermaid .node rect,
+        .mermaid .node polygon { fill: #111827; stroke: #374151; }
+        .mermaid .flowchart-link { stroke-width: 2.5px; }
+        .legend { margin-top: 18px; }
 
-        /* Node styles */
-        .node { filter: drop-shadow(0 6px 18px rgba(0,0,0,0.35)); }
-        .node rect {
-            fill: #111827; stroke: #374151; stroke-width: 2px; rx: 10; ry: 10;
-        }
-        .node text { fill: #e5e7eb; font-size: 16px; font-weight: 600; }
-
-        /* Arrow styles with animation */
-        .arrow { stroke-width: 3; fill: none; }
-        .a-extract { stroke: #60a5fa; }
-        .a-compare { stroke: #f59e0b; }
-        .a-report { stroke: #10b981; }
-        .a-feedback { stroke: #8b5cf6; }
-        .dash {
+        /* Animated edge styling */
+        .link-animated {
             stroke-dasharray: 6 10;
-            animation: dashmove 2.2s linear infinite;
+            animation: dashmove 2.4s linear infinite;
         }
-        @keyframes dashmove {
-            to { stroke-dashoffset: -160; }
-        }
-        .arrow-label { fill: #cbd5e1; font-size: 13px; }
+        @keyframes dashmove { to { stroke-dashoffset: -160; } }
 
         .note {
             margin-top: 18px; padding: 14px 16px;
@@ -89,6 +79,17 @@
             border-left: 4px solid #3b82f6; border-radius: 6px; color: #d1d5db; font-size: 0.95rem;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'dark', securityLevel: 'loose', flowchart: { curve: 'basis' } });
+        // Add animated dashes to rendered edges
+        window.addEventListener('load', function(){
+            try {
+                var edgePaths = document.querySelectorAll('.mermaid svg .edgePaths path');
+                edgePaths.forEach(function(p){ p.classList.add('link-animated'); });
+            } catch (e) {}
+        });
+    </script>
 </head>
 <body>
     <div class="container">
@@ -99,76 +100,18 @@
         </div>
 
         <div class="diagram">
-            <div class="svg-wrap">
-                <svg viewBox="0 0 1200 520" role="img" aria-label="Data flow diagram">
-                    <defs>
-                        <marker id="arrowHead" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="strokeWidth">
-                            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"></path>
-                        </marker>
-                        <linearGradient id="gradExcel" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0%" stop-color="#0ea5e9"/>
-                            <stop offset="100%" stop-color="#60a5fa"/>
-                        </linearGradient>
-                        <linearGradient id="gradRevit" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0%" stop-color="#06b6d4"/>
-                            <stop offset="100%" stop-color="#22d3ee"/>
-                        </linearGradient>
-                        <linearGradient id="gradReport" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0%" stop-color="#10b981"/>
-                            <stop offset="100%" stop-color="#34d399"/>
-                        </linearGradient>
-                        <linearGradient id="gradFeedback" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0%" stop-color="#8b5cf6"/>
-                            <stop offset="100%" stop-color="#a78bfa"/>
-                        </linearGradient>
-                    </defs>
+            <div class="mermaid">
+flowchart LR
+  Excel[Master Excel\nDept, Division, Room\nName, Color, DGSF+ → TreeNode]
+  Revit[Revit Model\nActual rooms/areas\nElements, parameters]
+  Report[Website Report\nCompare DGSF+ vs Area\nHighlight mismatches]
+  Feedback[Feedback & Write-back\nSuggest corrections\nWrite to Excel “DESIGN”]
 
-                    <!-- Nodes -->
-                    <g class="node" transform="translate(70,70)">
-                        <rect width="280" height="140" fill="url(#gradExcel)"></rect>
-                        <text x="20" y="46">Master Excel</text>
-                        <text x="20" y="78" font-weight="400" fill="#cbd5e1">Target: Department, Division, Room</text>
-                        <text x="20" y="104" font-weight="400" fill="#cbd5e1">Name, Color, DGSF+</text>
-                    </g>
-
-                    <g class="node" transform="translate(450,70)">
-                        <rect width="280" height="140" fill="url(#gradRevit)"></rect>
-                        <text x="20" y="46">Revit Model</text>
-                        <text x="20" y="78" font-weight="400" fill="#cbd5e1">Actual modeled rooms/areas</text>
-                        <text x="20" y="104" font-weight="400" fill="#cbd5e1">Elements, parameters</text>
-                    </g>
-
-                    <g class="node" transform="translate(830,70)">
-                        <rect width="300" height="140" fill="url(#gradReport)"></rect>
-                        <text x="20" y="46">Website Report</text>
-                        <text x="20" y="78" font-weight="400" fill="#cbd5e1">Compare DGSF+ vs Revit Area</text>
-                        <text x="20" y="104" font-weight="400" fill="#cbd5e1">Highlight mismatches</text>
-                    </g>
-
-                    <!-- Bottom node for write-back -->
-                    <g class="node" transform="translate(450,320)">
-                        <rect width="360" height="130" fill="url(#gradFeedback)"></rect>
-                        <text x="20" y="46">Feedback & Write-back</text>
-                        <text x="20" y="78" font-weight="400" fill="#cbd5e1">Suggest corrections to Revit elements</text>
-                        <text x="20" y="104" font-weight="400" fill="#cbd5e1">Write matched data to Excel column “DESIGN”</text>
-                    </g>
-
-                    <!-- Flows -->
-                    <path class="arrow a-extract dash" marker-end="url(#arrowHead)" d="M350,140 C390,140 410,140 450,140"/>
-                    <text class="arrow-label" x="405" y="120">Extract targets</text>
-
-                    <path class="arrow a-compare dash" marker-end="url(#arrowHead)" d="M730,140 C770,140 790,140 830,140"/>
-                    <text class="arrow-label" x="770" y="120">Compare DGSF+ vs Area</text>
-
-                    <path class="arrow a-report dash" marker-end="url(#arrowHead)" d="M980,210 C980,250 750,250 630,315"/>
-                    <text class="arrow-label" x="850" y="260">Generate report</text>
-
-                    <path class="arrow a-feedback dash" marker-end="url(#arrowHead)" d="M630,320 C620,280 610,230 590,210 C570,190 540,170 510,160"/>
-                    <text class="arrow-label" x="545" y="240">Suggest corrections</text>
-
-                    <path class="arrow a-feedback dash" marker-end="url(#arrowHead)" d="M520,385 C400,385 330,240 250,210"/>
-                    <text class="arrow-label" x="330" y="360">Write matched to Excel “DESIGN”</text>
-                </svg>
+  Excel -- Extract targets --> Revit
+  Revit -- Compare DGSF+ vs Area --> Report
+  Report -- Generate report --> Feedback
+  Revit -. Suggest corrections .-> Feedback
+  Feedback -. Write matched to Excel “DESIGN” .-> Excel
             </div>
 
             <div class="legend">
@@ -180,7 +123,7 @@
         </div>
 
         <div class="note">
-            This diagram is illustrative. The report highlights any unmatched items and proposes parameter corrections on the Revit side; once aligned, the confirmed values are written to the Master Excel in the <strong>DESIGN</strong> column.
+            This diagram is illustrative. Partial rows from the Master Excel are first parsed into an internal <strong>TreeNode</strong> structure (Department → Division → Room). The report highlights any unmatched items and proposes parameter corrections on the Revit side; once aligned, the confirmed values are written to the Master Excel in the <strong>DESIGN</strong> column.
         </div>
     </div>
 </body>
