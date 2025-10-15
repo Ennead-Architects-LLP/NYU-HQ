@@ -91,12 +91,15 @@ dist\send_report.exe
 
 ### Usage
 
-1. **Double-click** `send_report.exe`
-2. Wait for it to complete (usually 5-10 seconds)
-3. Check the output for success/failure
-4. Press Enter to close the window
+1. **Double-click** `NYU_HQ.exe`
+2. The program runs silently in the background (no windows, no popups)
+3. Wait 5-10 seconds for it to complete
 
 **That's it!** The latest report will be automatically uploaded to the repository.
+
+**Note:** The exe runs completely silently. To verify it worked:
+- Check the repository's commit history on GitHub
+- Or run the Python script directly for debug output: `python sender/send_report.py`
 
 ### What It Does
 
