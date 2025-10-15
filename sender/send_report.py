@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 HTML Report Sender
-Sends the latest HTML report from local folder to GitHub repository via GitHub Actions.
+Sends the latest HTML report from local folder to GitHub repository.
 """
 
 import os
@@ -91,25 +91,69 @@ def read_html_content(file_path):
         raise IOError(f"Error reading file {file_path}: {e}")
 
 
-def trigger_github_workflow(html_content, config):
-    """Triggers the GitHub Actions workflow with the HTML content."""
+def get_file_sha(config, file_path):
+    """Gets the SHA of the current file in the repository."""
     token = config['github_token']
     repo_owner = config['repo_owner']
     repo_name = config['repo_name']
     
-    # Encode HTML content as base64 to safely pass through API
-    html_base64 = base64.b64encode(html_content.encode('utf-8')).decode('utf-8')
+    url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/contents/{file_path}"
     
-    # GitHub API endpoint for workflow dispatch
-    url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/actions/workflows/update-docs.yml/dispatches"
+    headers = {
+        'Authorization': f'token {token}',
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'NYU-HQ-Report-Sender'
+    }
+    
+    try:
+        req = urllib.request.Request(url, headers=headers, method='GET')
+        with urllib.request.urlopen(req, timeout=30) as response:
+            data = json.loads(response.read().decode('utf-8'))
+            return data.get('sha')
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            return None  # File doesn't exist yet
+        raise
+
+
+def update_github_file(html_content, config):
+    """Updates the file on GitHub using the Contents API."""
+    token = config['github_token']
+    repo_owner = config['repo_owner']
+    repo_name = config['repo_name']
+    file_path = "docs/index.html"
+    
+    print(f"Uploading to GitHub...")
+    print(f"Repository: {repo_owner}/{repo_name}")
+    print(f"File: {file_path}")
+    
+    # Get current file SHA (needed for update)
+    print("   Getting current file info...")
+    sha = get_file_sha(config, file_path)
+    if sha:
+        print(f"   Current file SHA: {sha[:7]}...")
+    else:
+        print("   File doesn't exist yet (will create)")
+    
+    # Encode content as base64
+    content_base64 = base64.b64encode(html_content.encode('utf-8')).decode('utf-8')
     
     # Prepare the request
-    data = json.dumps({
-        'ref': 'main',
-        'inputs': {
-            'html_content': html_base64
-        }
-    }).encode('utf-8')
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    commit_message = f"Update docs/index.html with latest report - {timestamp}"
+    
+    payload = {
+        'message': commit_message,
+        'content': content_base64,
+        'branch': 'main'
+    }
+    
+    if sha:
+        payload['sha'] = sha
+    
+    data = json.dumps(payload).encode('utf-8')
+    
+    url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/contents/{file_path}"
     
     headers = {
         'Authorization': f'token {token}',
@@ -118,16 +162,16 @@ def trigger_github_workflow(html_content, config):
         'User-Agent': 'NYU-HQ-Report-Sender'
     }
     
-    print(f"Triggering GitHub Actions workflow...")
-    print(f"Repository: {repo_owner}/{repo_name}")
+    print(f"   Committing changes...")
     
     try:
-        req = urllib.request.Request(url, data=data, headers=headers, method='POST')
+        req = urllib.request.Request(url, data=data, headers=headers, method='PUT')
         with urllib.request.urlopen(req, timeout=30) as response:
-            if response.status == 204:
-                print("[SUCCESS] Successfully triggered GitHub Actions workflow!")
-                print("The report will be committed to the repository shortly.")
-                print(f"Check: https://github.com/{repo_owner}/{repo_name}/actions")
+            if response.status in [200, 201]:
+                result = json.loads(response.read().decode('utf-8'))
+                print("[SUCCESS] File updated successfully!")
+                print(f"   Commit: {result['commit']['sha'][:7]}")
+                print(f"   View: https://github.com/{repo_owner}/{repo_name}/blob/main/{file_path}")
                 return True
             else:
                 response_body = response.read().decode('utf-8')
@@ -176,13 +220,13 @@ def main():
         html_content = read_html_content(latest_html)
         print(f"   File size: {len(html_content):,} bytes")
         
-        # Step 5: Trigger GitHub workflow
-        print("\n5. Triggering GitHub Actions workflow...")
-        success = trigger_github_workflow(html_content, config)
+        # Step 5: Upload to GitHub
+        print("\n5. Updating GitHub repository...")
+        success = update_github_file(html_content, config)
         
         if success:
             print("\n" + "=" * 60)
-            print("SUCCESS! The HTML report will be committed to the repository.")
+            print("SUCCESS! The HTML report has been updated in the repository.")
             print("=" * 60)
             return 0
         else:
