@@ -1,12 +1,12 @@
 # HTML Report Sender
 
-This folder contains a script that automatically sends the latest HTML report from your local machine to the NYU-HQ GitHub repository via GitHub Actions.
+This folder contains a script that automatically sends the latest HTML report from your local machine to the NYU-HQ GitHub repository.
 
 ## How It Works
 
 1. The script finds the latest HTML file in your local reports folder
-2. Sends it to GitHub via API to trigger a GitHub Actions workflow
-3. The workflow commits the HTML as `docs/index.html` in the repository
+2. Uploads it directly to GitHub via the GitHub Contents API
+3. The file is committed as `docs/index.html` in the repository
 4. The updated HTML is automatically published via GitHub Pages
 
 **Note**: Users do NOT need Git, Python, or any configuration. Just run the .exe!
@@ -38,7 +38,7 @@ Edit `sender/config.json`:
 ```json
 {
   "github_token": "ghp_YourActualTokenHere123456789",
-  "repo_owner": "szhang",
+  "repo_owner": "Ennead-Architects-LLP",
   "repo_name": "NYU-HQ"
 }
 ```
@@ -60,7 +60,15 @@ The script will:
 
 The executable will be created at: `sender/dist/send_report.exe`
 
-### Step 4: Distribute
+### Step 4: Test
+
+Before distributing, test the executable:
+
+```bash
+dist\send_report.exe
+```
+
+### Step 5: Distribute
 
 **That's it!** Just distribute `dist/send_report.exe` to your users.
 
@@ -68,6 +76,7 @@ The executable will be created at: `sender/dist/send_report.exe`
 - ✅ No configuration needed by users
 - ✅ Token is embedded securely
 - ✅ No Python, Git, or anything else required
+- ✅ Handles files of any size (tested with 340KB+ HTML files)
 
 ## For End Users: How to Use
 
@@ -84,7 +93,7 @@ The executable will be created at: `sender/dist/send_report.exe`
 3. Check the output for success/failure
 4. Press Enter to close the window
 
-**That's it!** The latest report will be automatically sent to the repository.
+**That's it!** The latest report will be automatically uploaded to the repository.
 
 ### What It Does
 
@@ -95,13 +104,13 @@ The executable will:
    C:\Users\{YOUR_USERNAME}\Documents\EnneadTab Ecosystem\EA_Dist\Apps\_revit\EnneaDuck.extension\EnneadTab Tailor.tab\Proj. 2534.panel\NYU HQ.pulldown\monitor_area.pushbutton\reports
    ```
 3. Find the most recently modified HTML file
-4. Send it to GitHub via API
-5. GitHub Actions will commit it automatically
+4. Upload it directly to GitHub
+5. The file is committed automatically with a timestamp
 
 ### After Running
 
-- Check GitHub Actions: https://github.com/szhang/NYU-HQ/actions
-- View the updated page: https://szhang.github.io/NYU-HQ/ (if Pages is enabled)
+- View the commit: Check the repository's commit history
+- View the updated page: https://ennead-architects-llp.github.io/NYU-HQ/
 
 ## Troubleshooting
 
@@ -124,18 +133,22 @@ The embedded GitHub token is invalid or expired. Contact your administrator for 
 
 ### HTTP Error 404 (Not Found)
 
-The repository configuration is incorrect, or the workflow file is missing. Contact your administrator.
+The repository configuration is incorrect. Contact your administrator.
 
 ### Network Error
 
 Check your internet connection. The tool needs to connect to GitHub's API (api.github.com).
 
+### File too large
+
+The GitHub Contents API can handle files up to 100MB. If your HTML file is larger than that, it will need to be optimized or split.
+
 ## Security Notes
 
 - The GitHub token is embedded in the executable
 - The token only has access to the NYU-HQ repository
-- If the token is compromised, it can be revoked on GitHub
-- Users cannot extract or view the token from the .exe easily
+- If the token is compromised, it can be revoked on GitHub and a new .exe can be built
+- Users cannot easily extract the token from the compiled .exe
 - The token allows committing to the repository but nothing else
 
 ## Files
@@ -143,10 +156,19 @@ Check your internet connection. The tool needs to connect to GitHub's API (api.g
 - `send_report.py` - Source script (development version)
 - `build.bat` - Build script to create the .exe
 - `create_build_version.py` - Helper script for embedding config
-- `config.json` - Configuration file (used during build)
+- `config.json` - Configuration file (used during build, not committed to git)
 - `config.json.example` - Template for configuration
 - `dist/send_report.exe` - Final executable (created by build.bat)
 - `README.md` - This file
+
+## Technical Details
+
+The script uses the GitHub Contents API to directly update files in the repository:
+- Endpoint: `PUT /repos/{owner}/{repo}/contents/{path}`
+- Content is base64 encoded for transmission
+- The file's current SHA is fetched first (required for updates)
+- Each upload creates a new commit with a timestamp
+- No GitHub Actions or workflows are needed for the sender to work
 
 ## Rebuilding
 
@@ -154,4 +176,5 @@ If you need to update the token or configuration:
 
 1. Update `sender/config.json`
 2. Run `build.bat` again
-3. Distribute the new `dist/send_report.exe`
+3. Test the new .exe
+4. Distribute the new `dist/send_report.exe`
