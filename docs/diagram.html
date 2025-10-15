@@ -105,26 +105,23 @@ flowchart LR
   Excel[Master Excel\nDept, Division, Room\nName, Color, DGSF+ → TreeNode]
   Revit[Revit Model\nActual rooms/areas\nElements, parameters]
   Report[Website Report\nCompare DGSF+ vs Area\nHighlight mismatches]
-  Feedback[Feedback & Write-back\nSuggest corrections\nWrite to Excel “DESIGN”]
 
-  Excel -- Extract targets --> Revit
-  Revit -- Compare DGSF+ vs Area --> Report
-  Report -- Generate report --> Feedback
-  Revit -. Suggest corrections .-> Feedback
-  Feedback -. Write matched to Excel “DESIGN” .-> Excel
-  %% Color the links
+  Excel -- Extract targets --> Report
+  Revit -- Extract actuals --> Report
+  Report -- Write valid → Excel “DESIGN” --> Excel
+  Report -. Write invalid → Revit suggestions .-> Revit
+  %% Color the links (index order as defined above)
   linkStyle 0 stroke:#60a5fa,stroke-width:3px,color:#60a5fa;
-  linkStyle 1 stroke:#f59e0b,stroke-width:3px,color:#f59e0b;
+  linkStyle 1 stroke:#22d3ee,stroke-width:3px,color:#22d3ee;
   linkStyle 2 stroke:#10b981,stroke-width:3px,color:#10b981;
   linkStyle 3 stroke:#a78bfa,stroke-width:3px,color:#a78bfa,stroke-dasharray:6 6;
-  linkStyle 4 stroke:#a78bfa,stroke-width:3px,color:#a78bfa,stroke-dasharray:6 6;
             </div>
 
             <div class="legend">
                 <div class="item"><span class="swatch s-extract"></span><span>Extract targets from Master Excel</span></div>
-                <div class="item"><span class="swatch s-compare"></span><span>Compare with Revit modeled data</span></div>
-                <div class="item"><span class="swatch s-report"></span><span>Generate animated website report</span></div>
-                <div class="item"><span class="swatch s-feedback"></span><span>Suggest Revit fixes & write back to Excel “DESIGN”</span></div>
+                <div class="item"><span class="swatch s-compare"></span><span>Extract actuals from Revit model</span></div>
+                <div class="item"><span class="swatch s-report"></span><span>Report writes valid totals to Excel “DESIGN”</span></div>
+                <div class="item"><span class="swatch s-feedback"></span><span>Report sends invalids/suggestions back to Revit</span></div>
             </div>
         </div>
 
