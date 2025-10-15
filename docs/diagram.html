@@ -100,27 +100,78 @@
         </div>
 
         <div class="diagram">
-            <div class="mermaid">
-flowchart LR
-  Excel[Master Excel\nDept, Division, Room\nName, Color, DGSF+ -> TreeNode]
-  Revit[Revit Model\nActual rooms/areas\nElements, parameters]
-  Report[Website Report\nCompare DGSF+ vs Area\nHighlight mismatches]
+            <div class="svg-wrap">
+                <svg viewBox="0 0 1200 520" role="img" aria-label="Data flow diagram">
+                    <defs>
+                        <marker id="arrowHead" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="strokeWidth">
+                            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"></path>
+                        </marker>
+                    </defs>
 
-  Excel -- Extract targets --> Report
-  Revit -- Extract actuals --> Report
-  Report -- Write valid to Excel DESIGN --> Excel
-  Report -. Write invalid to Revit (suggestions) .-> Revit
-  %% Color the links (index order as defined above)
-  linkStyle 0 stroke:#60a5fa,stroke-width:3px,color:#60a5fa;
-  linkStyle 1 stroke:#22d3ee,stroke-width:3px,color:#22d3ee;
-  linkStyle 2 stroke:#10b981,stroke-width:3px,color:#10b981;
-  linkStyle 3 stroke:#a78bfa,stroke-width:3px,color:#a78bfa,stroke-dasharray:6 6;
+                    <!-- Nodes -->
+                    <g class="node" transform="translate(70,70)">
+                        <rect width="280" height="140" rx="10" ry="10" fill="#111827" stroke="#374151" stroke-width="2"></rect>
+                        <g fill="#e5e7eb" font-size="16" font-weight="600">
+                            <text x="20" y="46">Master Excel</text>
+                            <text x="20" y="78" font-weight="400" fill="#cbd5e1">Dept, Division, Room</text>
+                            <text x="20" y="104" font-weight="400" fill="#cbd5e1">Name, Color, DGSF+ -&gt; TreeNode</text>
+                        </g>
+                    </g>
+
+                    <g class="node" transform="translate(830,70)">
+                        <rect width="300" height="140" rx="10" ry="10" fill="#111827" stroke="#374151" stroke-width="2"></rect>
+                        <g fill="#e5e7eb" font-size="16" font-weight="600">
+                            <text x="20" y="46">Website Report</text>
+                            <text x="20" y="78" font-weight="400" fill="#cbd5e1">Compare DGSF+ vs Area</text>
+                            <text x="20" y="104" font-weight="400" fill="#cbd5e1">Highlight mismatches</text>
+                        </g>
+                    </g>
+
+                    <g class="node" transform="translate(450,70)">
+                        <rect width="280" height="140" rx="10" ry="10" fill="#111827" stroke="#374151" stroke-width="2"></rect>
+                        <g fill="#e5e7eb" font-size="16" font-weight="600">
+                            <text x="20" y="46">Revit Model</text>
+                            <text x="20" y="78" font-weight="400" fill="#cbd5e1">Actual rooms/areas</text>
+                            <text x="20" y="104" font-weight="400" fill="#cbd5e1">Elements, parameters</text>
+                        </g>
+                    </g>
+
+                    <g class="node" transform="translate(450,320)">
+                        <rect width="360" height="130" rx="10" ry="10" fill="#111827" stroke="#374151" stroke-width="2"></rect>
+                        <g fill="#e5e7eb" font-size="16" font-weight="600">
+                            <text x="20" y="46">Feedback &amp; Write-back</text>
+                            <text x="20" y="78" font-weight="400" fill="#cbd5e1">Write valid totals to Excel DESIGN</text>
+                            <text x="20" y="104" font-weight="400" fill="#cbd5e1">Send invalids/suggestions to Revit</text>
+                        </g>
+                    </g>
+
+                    <!-- Flows (animated) -->
+                    <!-- Excel -> Report -->
+                    <path class="arrow a-extract link-animated" style="stroke:#60a5fa" marker-end="url(#arrowHead)" d="M350,140 C520,140 700,140 830,140" fill="none" stroke-width="3"/>
+                    <text class="arrow-label" x="560" y="120" fill="#60a5fa" font-size="13">Extract targets</text>
+
+                    <!-- Revit -> Report -->
+                    <path class="arrow a-compare link-animated" style="stroke:#22d3ee" marker-end="url(#arrowHead)" d="M730,140 C770,140 800,140 830,140" fill="none" stroke-width="3"/>
+                    <text class="arrow-label" x="760" y="120" fill="#22d3ee" font-size="13">Extract actuals</text>
+
+                    <!-- Report -> Feedback (generate) -->
+                    <path class="arrow a-report link-animated" style="stroke:#10b981" marker-end="url(#arrowHead)" d="M980,210 C960,260 760,280 630,320" fill="none" stroke-width="3"/>
+                    <text class="arrow-label" x="850" y="260" fill="#10b981" font-size="13">Generate report</text>
+
+                    <!-- Feedback -> Excel (valid) -->
+                    <path class="arrow a-feedback link-animated" style="stroke:#10b981;stroke-dasharray:6 10" marker-end="url(#arrowHead)" d="M520,385 C420,360 360,260 320,200 C305,175 298,155 290,140" fill="none" stroke-width="3"/>
+                    <text class="arrow-label" x="360" y="360" fill="#10b981" font-size="13">Write valid to Excel</text>
+
+                    <!-- Feedback -> Revit (invalid) -->
+                    <path class="arrow a-feedback link-animated" style="stroke:#a78bfa;stroke-dasharray:6 10" marker-end="url(#arrowHead)" d="M630,320 C640,260 600,200 560,170 C540,155 510,150 500,150" fill="none" stroke-width="3"/>
+                    <text class="arrow-label" x="545" y="240" fill="#a78bfa" font-size="13">Suggestions to Revit</text>
+                </svg>
             </div>
 
             <div class="legend">
                 <div class="item"><span class="swatch s-extract"></span><span>Extract targets from Master Excel</span></div>
                 <div class="item"><span class="swatch s-compare"></span><span>Extract actuals from Revit model</span></div>
-                <div class="item"><span class="swatch s-report"></span><span>Report writes valid totals to Excel “DESIGN”</span></div>
+                <div class="item"><span class="swatch s-report"></span><span>Report writes valid totals to Excel DESIGN</span></div>
                 <div class="item"><span class="swatch s-feedback"></span><span>Report sends invalids/suggestions back to Revit</span></div>
             </div>
         </div>
