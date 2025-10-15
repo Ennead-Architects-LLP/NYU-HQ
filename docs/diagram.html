@@ -108,8 +108,8 @@
                         </marker>
                     </defs>
 
-                    <!-- Nodes -->
-                    <g class="node" transform="translate(70,70)">
+                    <!-- Nodes in diamond layout: Excel (left), Report (top), Revit (right), Feedback (bottom) -->
+                    <g class="node" transform="translate(120,200)">
                         <rect width="280" height="140" rx="10" ry="10" fill="#111827" stroke="#374151" stroke-width="2"></rect>
                         <g fill="#e5e7eb" font-size="16" font-weight="600">
                             <text x="20" y="46">Master Excel</text>
@@ -118,7 +118,7 @@
                         </g>
                     </g>
 
-                    <g class="node" transform="translate(830,70)">
+                    <g class="node" transform="translate(450,40)">
                         <rect width="300" height="140" rx="10" ry="10" fill="#111827" stroke="#374151" stroke-width="2"></rect>
                         <g fill="#e5e7eb" font-size="16" font-weight="600">
                             <text x="20" y="46">Website Report</text>
@@ -127,7 +127,7 @@
                         </g>
                     </g>
 
-                    <g class="node" transform="translate(450,70)">
+                    <g class="node" transform="translate(800,200)">
                         <rect width="280" height="140" rx="10" ry="10" fill="#111827" stroke="#374151" stroke-width="2"></rect>
                         <g fill="#e5e7eb" font-size="16" font-weight="600">
                             <text x="20" y="46">Revit Model</text>
@@ -136,7 +136,7 @@
                         </g>
                     </g>
 
-                    <g class="node" transform="translate(450,320)">
+                    <g class="node" transform="translate(420,360)">
                         <rect width="360" height="130" rx="10" ry="10" fill="#111827" stroke="#374151" stroke-width="2"></rect>
                         <g fill="#e5e7eb" font-size="16" font-weight="600">
                             <text x="20" y="46">Feedback &amp; Write-back</text>
@@ -146,25 +146,25 @@
                     </g>
 
                     <!-- Flows (animated) -->
-                    <!-- Excel -> Report -->
-                    <path class="arrow a-extract link-animated" style="stroke:#60a5fa" marker-end="url(#arrowHead)" d="M350,140 C520,140 700,140 830,140" fill="none" stroke-width="3"/>
-                    <text class="arrow-label" x="560" y="120" fill="#60a5fa" font-size="13">Extract targets</text>
+                    <!-- Excel -> Report (from Excel right edge center to Report bottom center) -->
+                    <path class="arrow a-extract link-animated" style="stroke:#60a5fa" marker-end="url(#arrowHead)" d="M400,270 C480,220 520,220 600,180" fill="none" stroke-width="3"/>
+                    <text class="arrow-label" x="480" y="210" fill="#60a5fa" font-size="13">Extract targets</text>
 
-                    <!-- Revit -> Report -->
-                    <path class="arrow a-compare link-animated" style="stroke:#22d3ee" marker-end="url(#arrowHead)" d="M730,140 C770,140 800,140 830,140" fill="none" stroke-width="3"/>
-                    <text class="arrow-label" x="760" y="120" fill="#22d3ee" font-size="13">Extract actuals</text>
+                    <!-- Revit -> Report (from Revit left edge center to Report bottom center) -->
+                    <path class="arrow a-compare link-animated" style="stroke:#22d3ee" marker-end="url(#arrowHead)" d="M800,270 C720,220 680,220 600,180" fill="none" stroke-width="3"/>
+                    <text class="arrow-label" x="700" y="210" fill="#22d3ee" font-size="13">Extract actuals</text>
 
-                    <!-- Report -> Feedback (generate) -->
-                    <path class="arrow a-report link-animated" style="stroke:#10b981" marker-end="url(#arrowHead)" d="M980,210 C960,260 760,280 630,320" fill="none" stroke-width="3"/>
-                    <text class="arrow-label" x="850" y="260" fill="#10b981" font-size="13">Generate report</text>
+                    <!-- Report -> Feedback (vertical down, bottom center to top center) -->
+                    <path class="arrow a-report link-animated" style="stroke:#10b981" marker-end="url(#arrowHead)" d="M600,180 C600,220 600,300 600,360" fill="none" stroke-width="3"/>
+                    <text class="arrow-label" x="610" y="280" fill="#10b981" font-size="13">Generate report</text>
 
-                    <!-- Feedback -> Excel (valid) -->
-                    <path class="arrow a-feedback link-animated" style="stroke:#10b981;stroke-dasharray:6 10" marker-end="url(#arrowHead)" d="M520,385 C420,360 360,260 320,200 C305,175 298,155 290,140" fill="none" stroke-width="3"/>
-                    <text class="arrow-label" x="360" y="360" fill="#10b981" font-size="13">Write valid to Excel</text>
+                    <!-- Feedback -> Excel (valid) from left edge center to Excel bottom center -->
+                    <path class="arrow a-feedback link-animated" style="stroke:#10b981;stroke-dasharray:6 10" marker-end="url(#arrowHead)" d="M420,425 C360,440 300,420 260,340" fill="none" stroke-width="3"/>
+                    <text class="arrow-label" x="320" y="420" fill="#10b981" font-size="13">Write valid to Excel</text>
 
-                    <!-- Feedback -> Revit (invalid) -->
-                    <path class="arrow a-feedback link-animated" style="stroke:#a78bfa;stroke-dasharray:6 10" marker-end="url(#arrowHead)" d="M630,320 C640,260 600,200 560,170 C540,155 510,150 500,150" fill="none" stroke-width="3"/>
-                    <text class="arrow-label" x="545" y="240" fill="#a78bfa" font-size="13">Suggestions to Revit</text>
+                    <!-- Feedback -> Revit (invalid) from right edge center to Revit bottom center -->
+                    <path class="arrow a-feedback link-animated" style="stroke:#a78bfa;stroke-dasharray:6 10" marker-end="url(#arrowHead)" d="M780,425 C840,440 900,420 940,340" fill="none" stroke-width="3"/>
+                    <text class="arrow-label" x="820" y="420" fill="#a78bfa" font-size="13">Suggestions to Revit</text>
                 </svg>
             </div>
 
