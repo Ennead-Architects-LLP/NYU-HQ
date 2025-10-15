@@ -51,13 +51,33 @@ del send_report_build.py >nul 2>&1
 rmdir /s /q build >nul 2>&1
 del send_report.spec >nul 2>&1
 
+echo [5/5] Deploying to ExeProducts...
+set TARGET_DIR=C:\Users\%USERNAME%\github\EnneadTab-OS\Apps\lib\ExeProducts
+set TARGET_FILE=%TARGET_DIR%\NYU_HQ.exe
+
+if not exist "%TARGET_DIR%" (
+    echo [ERROR] Target directory not found: %TARGET_DIR%
+    echo Please check the path and try again.
+    pause
+    exit /b 1
+)
+
+copy /Y dist\send_report.exe "%TARGET_FILE%" >nul 2>&1
+if errorlevel 1 (
+    echo [ERROR] Failed to copy executable to target directory
+    pause
+    exit /b 1
+)
+
 echo.
 echo ============================================================
-echo SUCCESS! Executable created at: dist\send_report.exe
+echo SUCCESS! Executable created and deployed
 echo ============================================================
 echo.
-echo You can now distribute dist\send_report.exe to users.
-echo They only need the .exe file - no config or setup required!
+echo Local copy: dist\send_report.exe
+echo Deployed to: %TARGET_FILE%
+echo.
+echo The .exe is ready for distribution!
 echo.
 pause
 

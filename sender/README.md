@@ -57,8 +57,11 @@ The script will:
 2. Embed your configuration into the code
 3. Compile everything into a single .exe
 4. Clean up temporary files
+5. Deploy to ExeProducts folder as `NYU_HQ.exe`
 
-The executable will be created at: `sender/dist/send_report.exe`
+The executable will be created at:
+- Local copy: `sender/dist/send_report.exe`
+- Deployed to: `C:\Users\{USERNAME}\github\EnneadTab-OS\Apps\lib\ExeProducts\NYU_HQ.exe`
 
 ### Step 4: Test
 
