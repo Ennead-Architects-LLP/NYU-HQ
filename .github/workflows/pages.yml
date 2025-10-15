@@ -21,31 +21,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.1
-          bundler-cache: true
-          working-directory: ./docs
-      
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v4
         with:
-          static_site_generator: jekyll
-          static_site_generator_version: "latest"
+          # Use static deployment (no site generator)
+          static_site_generator: static
       
-      - name: Build with Jekyll
+      - name: Prepare static site
         run: |
-          cd docs
-          bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
-        env:
-          JEKYLL_ENV: production
+          # Ensure docs exists and prevent Jekyll processing
+          mkdir -p docs
+          touch docs/.nojekyll
+          echo "base path: ${{ steps.pages.outputs.base_path }}"
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./docs/_site
+          path: ./docs
 
   deploy:
     environment:
