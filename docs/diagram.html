@@ -102,14 +102,14 @@
         <div class="diagram">
             <div class="mermaid">
 flowchart LR
-  Excel[Master Excel\nDept, Division, Room\nName, Color, DGSF+ → TreeNode]
+  Excel[Master Excel\nDept, Division, Room\nName, Color, DGSF+ -> TreeNode]
   Revit[Revit Model\nActual rooms/areas\nElements, parameters]
   Report[Website Report\nCompare DGSF+ vs Area\nHighlight mismatches]
 
   Excel -- Extract targets --> Report
   Revit -- Extract actuals --> Report
-  Report -- Write valid → Excel “DESIGN” --> Excel
-  Report -. Write invalid → Revit suggestions .-> Revit
+  Report -- Write valid to Excel DESIGN --> Excel
+  Report -. Write invalid to Revit (suggestions) .-> Revit
   %% Color the links (index order as defined above)
   linkStyle 0 stroke:#60a5fa,stroke-width:3px,color:#60a5fa;
   linkStyle 1 stroke:#22d3ee,stroke-width:3px,color:#22d3ee;
