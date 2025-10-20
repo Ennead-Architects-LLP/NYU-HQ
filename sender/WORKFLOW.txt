@@ -1,0 +1,227 @@
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    NYU-HQ Multi-File Sender Workflow                    │
+└─────────────────────────────────────────────────────────────────────────┘
+
+STEP 1: Other Repo Generates Files
+═══════════════════════════════════════════════════════════════════════════
+
+    ┌──────────────────────────────────────────┐
+    │  Report Generator (Other Repo)           │
+    │  ┌────────────────────────────────────┐  │
+    │  │ Python Script generates:           │  │
+    │  │  • report_2025_10_20_143025.html   │  │
+    │  │  • styles.css                      │  │
+    │  │  • script.js                       │  │
+    │  │  • data.json                       │  │
+    │  └────────────────────────────────────┘  │
+    └──────────────────────────────────────────┘
+                      │
+                      ↓
+    ┌──────────────────────────────────────────┐
+    │  Reports Folder                          │
+    │  C:\Users\...\reports\                   │
+    │  ┌────────────────────────────────────┐  │
+    │  │ report_2025_10_20_143025.html      │  │ ← Latest HTML
+    │  │ styles.css                         │  │ ← Supporting files
+    │  │ script.js                          │  │
+    │  │ data.json                          │  │
+    │  └────────────────────────────────────┘  │
+    └──────────────────────────────────────────┘
+
+
+STEP 2: Sender Scans & Categorizes
+═══════════════════════════════════════════════════════════════════════════
+
+    ┌──────────────────────────────────────────┐
+    │  NYU_HQ.exe (This Repo)                  │
+    │  ┌────────────────────────────────────┐  │
+    │  │ find_report_files()                │  │
+    │  │                                    │  │
+    │  │ 1. Find HTML files                 │  │
+    │  │    ↓                               │  │
+    │  │    Select LATEST by mod time       │  │
+    │  │    ✓ report_2025_10_20_143025.html│  │
+    │  │                                    │  │
+    │  │ 2. Find supporting files           │  │
+    │  │    ✓ styles.css                    │  │
+    │  │    ✓ script.js                     │  │
+    │  │    ✓ data.json                     │  │
+    │  └────────────────────────────────────┘  │
+    └──────────────────────────────────────────┘
+
+
+STEP 3: Upload to GitHub
+═══════════════════════════════════════════════════════════════════════════
+
+    ┌─────────────────────────────────────────────────────────────────────┐
+    │  update_all_files()                                                 │
+    │                                                                     │
+    │  [1/4] report_2025_10_20_143025.html → index.html                   │
+    │        ↓ update_github_file(target_name="index.html")              │
+    │        ✓ SUCCESS                                                    │
+    │                                                                     │
+    │  [2/4] styles.css → styles.css                                      │
+    │        ↓ update_github_file()                                       │
+    │        ✓ SUCCESS                                                    │
+    │                                                                     │
+    │  [3/4] script.js → script.js                                        │
+    │        ↓ update_github_file()                                       │
+    │        ✓ SUCCESS                                                    │
+    │                                                                     │
+    │  [4/4] data.json → data.json                                        │
+    │        ↓ update_github_file()                                       │
+    │        ✓ SUCCESS                                                    │
+    └─────────────────────────────────────────────────────────────────────┘
+                                  │
+                                  ↓
+    ┌─────────────────────────────────────────────────────────────────────┐
+    │  GitHub Repository: Ennead-Architects-LLP/NYU-HQ                    │
+    │  Branch: main                                                       │
+    │  Folder: docs/                                                      │
+    │  ┌───────────────────────────────────────────────────────────────┐  │
+    │  │ ✓ index.html      ← From report_2025_10_20_143025.html       │  │
+    │  │ ✓ styles.css      ← Original name preserved                  │  │
+    │  │ ✓ script.js       ← Original name preserved                  │  │
+    │  │ ✓ data.json       ← Original name preserved                  │  │
+    │  └───────────────────────────────────────────────────────────────┘  │
+    │                                                                     │
+    │  Each file committed with timestamp:                                │
+    │  "Update docs/index.html - 2025-10-20 14:30:25"                     │
+    └─────────────────────────────────────────────────────────────────────┘
+
+
+STEP 4: GitHub Pages Deployment
+═══════════════════════════════════════════════════════════════════════════
+
+    ┌─────────────────────────────────────────────────────────────────────┐
+    │  GitHub Pages (Automatic)                                           │
+    │                                                                     │
+    │  Watches: main branch, docs/ folder                                 │
+    │  Triggers: On any commit to docs/                                   │
+    │  Deploys: ~30 seconds                                               │
+    └─────────────────────────────────────────────────────────────────────┘
+                                  │
+                                  ↓
+    ┌─────────────────────────────────────────────────────────────────────┐
+    │  Live Website                                                       │
+    │  https://ennead-architects-llp.github.io/NYU-HQ/                    │
+    │                                                                     │
+    │  Files accessible:                                                  │
+    │  ┌───────────────────────────────────────────────────────────────┐  │
+    │  │ /                    → index.html                             │  │
+    │  │ /styles.css          → styles.css                             │  │
+    │  │ /script.js           → script.js                              │  │
+    │  │ /data.json           → data.json                              │  │
+    │  └───────────────────────────────────────────────────────────────┘  │
+    └─────────────────────────────────────────────────────────────────────┘
+
+
+STEP 5: Browser Loads Page
+═══════════════════════════════════════════════════════════════════════════
+
+    ┌─────────────────────────────────────────────────────────────────────┐
+    │  User visits: https://ennead-architects-llp.github.io/NYU-HQ/       │
+    └─────────────────────────────────────────────────────────────────────┘
+                                  │
+                                  ↓
+    ┌─────────────────────────────────────────────────────────────────────┐
+    │  Browser                                                            │
+    │                                                                     │
+    │  1. GET /NYU-HQ/                                                    │
+    │     ← index.html                                                    │
+    │                                                                     │
+    │  2. Parse HTML, finds: <link href="styles.css">                     │
+    │     GET /NYU-HQ/styles.css                                          │
+    │     ← styles.css                                                    │
+    │                                                                     │
+    │  3. Parse HTML, finds: <script src="script.js">                     │
+    │     GET /NYU-HQ/script.js                                           │
+    │     ← script.js                                                     │
+    │                                                                     │
+    │  4. JavaScript runs, executes: fetch('data.json')                   │
+    │     GET /NYU-HQ/data.json                                           │
+    │     ← data.json                                                     │
+    │                                                                     │
+    │  5. Render complete page with styling and data                      │
+    └─────────────────────────────────────────────────────────────────────┘
+
+
+KEY DECISIONS
+═══════════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  Why rename HTML to index.html?                                         │
+│  • GitHub Pages serves index.html at root URL                           │
+│  • Users access site without filename in URL                            │
+│  • Report generator can use any HTML filename                           │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  Why keep supporting files' original names?                             │
+│  • HTML references them by name: href="styles.css"                      │
+│  • No need to rename - they're not accessed directly                    │
+│  • Predictable naming for report generators                             │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  Why upload ALL supporting files?                                       │
+│  • Report might reference any combination of CSS/JS/JSON                │
+│  • Simpler logic - no need to parse HTML to find references             │
+│  • Report generator controls what's in the folder                       │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  Why choose latest HTML by modification time?                           │
+│  • Report generators create timestamped files                           │
+│  • Most recent = most accurate data                                     │
+│  • Backward compatible with single HTML setup                           │
+└─────────────────────────────────────────────────────────────────────────┘
+
+
+EDGE CASES
+═══════════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  Case: Multiple HTML files in folder                                    │
+│  ─────────────────────────────────────────────────────────────────────  │
+│  reports/                                                               │
+│    old_report.html      (modified: 2025-10-19 10:00)                    │
+│    new_report.html      (modified: 2025-10-20 14:30) ← CHOSEN           │
+│                                                                         │
+│  Result: Only new_report.html → index.html                              │
+│  Solution: Clean old files or ensure latest is newest                   │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  Case: No supporting files                                              │
+│  ─────────────────────────────────────────────────────────────────────  │
+│  reports/                                                               │
+│    report.html                                                          │
+│                                                                         │
+│  Result: Only index.html uploaded                                       │
+│  Status: ✓ Works perfectly (backward compatible)                        │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  Case: HTML references file that doesn't exist                          │
+│  ─────────────────────────────────────────────────────────────────────  │
+│  reports/                                                               │
+│    report.html  (references "mystyles.css")                             │
+│    styles.css   (but file is named "styles.css")                        │
+│                                                                         │
+│  Result: Files upload, but browser shows 404 for mystyles.css           │
+│  Solution: Fix filename mismatch in report generator                    │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  Case: Partial upload failure                                           │
+│  ─────────────────────────────────────────────────────────────────────  │
+│  [1/4] report.html → index.html    ✓ SUCCESS                            │
+│  [2/4] styles.css                  ✕ FAILED (network error)             │
+│  [3/4] script.js                   ✓ SUCCESS                            │
+│  [4/4] data.json                   ✓ SUCCESS                            │
+│                                                                         │
+│  Result: 3/4 files uploaded, detailed error report shown                │
+│  Status: Partial success - successful files are committed               │
+└─────────────────────────────────────────────────────────────────────────┘
+

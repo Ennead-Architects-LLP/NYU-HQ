@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 HTML Report Sender
-Sends the latest HTML report from local folder to GitHub repository.
+Sends the latest HTML report and associated files (CSS, JS, JSON, images) from local folder to GitHub repository.
 """
 
 import os
@@ -13,6 +13,7 @@ import urllib.request
 import urllib.error
 from datetime import datetime
 import ctypes
+import mimetypes
 
 
 def get_script_dir():
@@ -65,29 +66,51 @@ def get_reports_folder():
     return Path(reports_path)
 
 
-def find_latest_html(reports_folder):
-    """Finds the most recent HTML file in the reports folder."""
+def find_report_files(reports_folder):
+    """Finds all report files (HTML, CSS, JS, JSON, images) in the reports folder.
+    
+    Returns:
+        tuple: (latest_html_file, other_files_list)
+            - latest_html_file: Path to the most recent HTML file (will become index.html)
+            - other_files_list: List of other supporting files (CSS, JS, JSON, PNG, JPG)
+    """
     if not reports_folder.exists():
         raise FileNotFoundError(f"Reports folder not found: {reports_folder}")
     
-    # Find all HTML files
+    # Find HTML files
     html_files = list(reports_folder.glob("*.html"))
     
     if not html_files:
         raise FileNotFoundError(f"No HTML files found in {reports_folder}")
     
-    # Sort by modification time, newest first
-    latest_file = max(html_files, key=lambda f: f.stat().st_mtime)
+    # Get the latest HTML file by modification time
+    latest_html = max(html_files, key=lambda f: f.stat().st_mtime)
     
-    return latest_file
+    # Find supporting files (CSS, JS, JSON, images)
+    supporting_extensions = ['.css', '.js', '.json', '.png', '.jpg', '.jpeg']
+    supporting_files = []
+    for ext in supporting_extensions:
+        files = list(reports_folder.glob(f"*{ext}"))
+        supporting_files.extend(files)
+    
+    # Sort supporting files by modification time for display
+    supporting_files.sort(key=lambda f: f.stat().st_mtime, reverse=True)
+    
+    return latest_html, supporting_files
 
 
-def read_html_content(file_path):
-    """Reads the HTML file and returns its content."""
+def read_file_content(file_path):
+    """Reads a file and returns its content."""
     try:
+        # Try UTF-8 first (for text files)
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
-        return content
+        return content, 'text'
+    except UnicodeDecodeError:
+        # If UTF-8 fails, read as binary
+        with open(file_path, 'rb') as f:
+            content = f.read()
+        return content, 'binary'
     except Exception as e:
         raise IOError(f"Error reading file {file_path}: {e}")
 
@@ -117,31 +140,44 @@ def get_file_sha(config, file_path):
         raise
 
 
-def update_github_file(html_content, config):
-    """Updates the file on GitHub using the Contents API."""
+def update_github_file(file_path, content, content_type, config, file_number, total_files, target_name=None):
+    """Updates a single file on GitHub using the Contents API.
+    
+    Args:
+        file_path: Local file path
+        content: File content
+        content_type: 'text' or 'binary'
+        config: Configuration dict
+        file_number: Current file number for progress display
+        total_files: Total number of files
+        target_name: Optional target filename (if None, uses original name)
+    """
     token = config['github_token']
     repo_owner = config['repo_owner']
     repo_name = config['repo_name']
-    file_path = "docs/index.html"
     
-    print(f"Uploading to GitHub...")
-    print(f"Repository: {repo_owner}/{repo_name}")
-    print(f"File: {file_path}")
+    # Use target_name if provided, otherwise use original filename
+    filename = target_name if target_name else file_path.name
+    github_path = f"docs/{filename}"
+    
+    # Show what we're uploading
+    if target_name and target_name != file_path.name:
+        print(f"\n   [{file_number}/{total_files}] {file_path.name} → {target_name}")
+    else:
+        print(f"\n   [{file_number}/{total_files}] {file_path.name}")
     
     # Get current file SHA (needed for update)
-    print("   Getting current file info...")
-    sha = get_file_sha(config, file_path)
-    if sha:
-        print(f"   Current file SHA: {sha[:7]}...")
-    else:
-        print("   File doesn't exist yet (will create)")
+    sha = get_file_sha(config, github_path)
     
     # Encode content as base64
-    content_base64 = base64.b64encode(html_content.encode('utf-8')).decode('utf-8')
+    if content_type == 'text':
+        content_base64 = base64.b64encode(content.encode('utf-8')).decode('utf-8')
+    else:
+        content_base64 = base64.b64encode(content).decode('utf-8')
     
     # Prepare the request
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    commit_message = f"Update docs/index.html with latest report - {timestamp}"
+    commit_message = f"Update {github_path} - {timestamp}"
     
     payload = {
         'message': commit_message,
@@ -154,7 +190,7 @@ def update_github_file(html_content, config):
     
     data = json.dumps(payload).encode('utf-8')
     
-    url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/contents/{file_path}"
+    url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/contents/{github_path}"
     
     headers = {
         'Authorization': f'token {token}',
@@ -163,33 +199,105 @@ def update_github_file(html_content, config):
         'User-Agent': 'NYU-HQ-Report-Sender'
     }
     
-    print(f"   Committing changes...")
-    
     try:
         req = urllib.request.Request(url, data=data, headers=headers, method='PUT')
         with urllib.request.urlopen(req, timeout=30) as response:
             if response.status in [200, 201]:
                 result = json.loads(response.read().decode('utf-8'))
-                print("[SUCCESS] File updated successfully!")
-                print(f"   Commit: {result['commit']['sha'][:7]}")
-                print(f"   View: https://github.com/{repo_owner}/{repo_name}/blob/main/{file_path}")
-                return True
+                print(f"      ✓ SUCCESS - Commit: {result['commit']['sha'][:7]}")
+                return True, None
             else:
                 response_body = response.read().decode('utf-8')
-                print(f"[FAILED] Unexpected response code: {response.status}")
-                print(f"Response: {response_body}")
-                return False
+                error_msg = f"Unexpected response code: {response.status}"
+                print(f"      ✕ FAILED - {error_msg}")
+                return False, error_msg
     except urllib.error.HTTPError as e:
         error_body = e.read().decode('utf-8')
-        print(f"[FAILED] HTTP Error {e.code}: {e.reason}")
-        print(f"Response: {error_body}")
-        return False
+        error_msg = f"HTTP Error {e.code}: {e.reason}"
+        print(f"      ✕ FAILED - {error_msg}")
+        return False, error_msg
     except urllib.error.URLError as e:
-        print(f"[FAILED] Network error: {e.reason}")
-        return False
+        error_msg = f"Network error: {e.reason}"
+        print(f"      ✕ FAILED - {error_msg}")
+        return False, error_msg
     except Exception as e:
-        print(f"[FAILED] Unexpected error: {e}")
-        return False
+        error_msg = f"Unexpected error: {e}"
+        print(f"      ✕ FAILED - {error_msg}")
+        return False, error_msg
+
+
+def update_all_files(latest_html, supporting_files, config):
+    """Updates all report files on GitHub.
+    
+    Args:
+        latest_html: Path to the latest HTML file (will be uploaded as index.html)
+        supporting_files: List of supporting files (CSS, JS, JSON) to upload with original names
+        config: Configuration dict
+    """
+    total_files = 1 + len(supporting_files)  # HTML + supporting files
+    
+    print(f"\nUploading {total_files} file(s) to GitHub...")
+    print(f"Repository: {config['repo_owner']}/{config['repo_name']}")
+    print(f"Target folder: docs/")
+    
+    success_count = 0
+    failed_files = []
+    current_file = 0
+    
+    # Upload the latest HTML as index.html
+    current_file += 1
+    try:
+        content, content_type = read_file_content(latest_html)
+        success, error = update_github_file(
+            latest_html, content, content_type, config, 
+            current_file, total_files, target_name="index.html"
+        )
+        
+        if success:
+            success_count += 1
+        else:
+            failed_files.append(("index.html (from " + latest_html.name + ")", error))
+            
+    except Exception as e:
+        error_msg = str(e)
+        print(f"\n   [{current_file}/{total_files}] {latest_html.name} → index.html")
+        print(f"      ✕ FAILED - {error_msg}")
+        failed_files.append(("index.html (from " + latest_html.name + ")", error_msg))
+    
+    # Upload supporting files with their original names
+    for file_path in supporting_files:
+        current_file += 1
+        try:
+            content, content_type = read_file_content(file_path)
+            success, error = update_github_file(
+                file_path, content, content_type, config, 
+                current_file, total_files
+            )
+            
+            if success:
+                success_count += 1
+            else:
+                failed_files.append((file_path.name, error))
+                
+        except Exception as e:
+            error_msg = str(e)
+            print(f"\n   [{current_file}/{total_files}] {file_path.name}")
+            print(f"      ✕ FAILED - {error_msg}")
+            failed_files.append((file_path.name, error_msg))
+    
+    # Summary
+    print(f"\n{'='*60}")
+    if success_count == total_files:
+        print(f"✓ ALL {success_count} FILE(S) UPLOADED SUCCESSFULLY!")
+    else:
+        print(f"PARTIAL SUCCESS: {success_count}/{total_files} file(s) uploaded")
+        if failed_files:
+            print(f"\nFailed files:")
+            for filename, error in failed_files:
+                print(f"  ✕ {filename}: {error}")
+    print(f"{'='*60}")
+    
+    return success_count == total_files, success_count, failed_files
 
 
 def show_notification(title, message, icon_type=0):
@@ -203,7 +311,8 @@ def main():
     
     if not is_frozen:
         print("=" * 60)
-        print("HTML Report Sender")
+        print("Multi-File Report Sender")
+        print("Supports: HTML, CSS, JS, JSON, Images (PNG/JPG)")
         print("=" * 60)
     
     try:
@@ -221,49 +330,54 @@ def main():
         if not is_frozen:
             print(f"   Reports folder: {reports_folder}")
         
-        # Step 3: Find latest HTML file
+        # Step 3: Find all report files
         if not is_frozen:
-            print("\n3. Finding latest HTML file...")
-        latest_html = find_latest_html(reports_folder)
-        mod_time = datetime.fromtimestamp(latest_html.stat().st_mtime)
-        if not is_frozen:
-            print(f"   Latest file: {latest_html.name}")
-            print(f"   Modified: {mod_time.strftime('%Y-%m-%d %H:%M:%S')}")
+            print("\n3. Finding report files (HTML, CSS, JS, JSON, images)...")
+        latest_html, supporting_files = find_report_files(reports_folder)
         
-        # Step 4: Read HTML content
         if not is_frozen:
-            print("\n4. Reading HTML content...")
-        html_content = read_html_content(latest_html)
-        if not is_frozen:
-            print(f"   File size: {len(html_content):,} bytes")
+            # Show the HTML file that will become index.html
+            html_mod_time = datetime.fromtimestamp(latest_html.stat().st_mtime)
+            html_size = latest_html.stat().st_size
+            print(f"   Latest HTML (→ index.html):")
+            print(f"      • {latest_html.name} ({html_size:,} bytes, modified: {html_mod_time.strftime('%Y-%m-%d %H:%M:%S')})")
+            
+            # Show supporting files
+            if supporting_files:
+                print(f"   Supporting files ({len(supporting_files)}):")
+                for file in supporting_files:
+                    mod_time = datetime.fromtimestamp(file.stat().st_mtime)
+                    file_size = file.stat().st_size
+                    print(f"      • {file.name} ({file_size:,} bytes, modified: {mod_time.strftime('%Y-%m-%d %H:%M:%S')})")
+            else:
+                print(f"   Supporting files: None found")
         
-        # Step 5: Upload to GitHub
+        # Step 4: Upload all files to GitHub
         if not is_frozen:
-            print("\n5. Updating GitHub repository...")
-        success = update_github_file(html_content, config)
+            print("\n4. Updating GitHub repository...")
+        success, success_count, failed_files = update_all_files(latest_html, supporting_files, config)
+        
+        total_files = 1 + len(supporting_files)  # HTML + supporting files
         
         if success:
             if not is_frozen:
-                print("\n" + "=" * 60)
-                print("SUCCESS! The HTML report has been updated in the repository.")
-                print("=" * 60)
+                print("\nSUCCESS! All report files have been updated in the repository.")
             else:
                 # Show success notification when running as exe
                 show_notification(
                     "NYU-HQ Report Sender",
-                    f"Successfully uploaded {latest_html.name}\n({len(html_content):,} bytes)\n\nUpdated: {mod_time.strftime('%Y-%m-%d %H:%M:%S')}",
+                    f"Successfully uploaded {success_count} file(s) to GitHub Pages",
                     1  # Info icon
                 )
             return 0
         else:
             if not is_frozen:
-                print("\n" + "=" * 60)
-                print("FAILED! Please check the error messages above.")
-                print("=" * 60)
+                print(f"\nPARTIAL SUCCESS: {success_count}/{total_files} file(s) uploaded.")
+                print("Please check the error messages above.")
             else:
                 show_notification(
-                    "NYU-HQ Report Sender - Error",
-                    "Failed to upload report.\nPlease check your internet connection.",
+                    "NYU-HQ Report Sender - Partial Success",
+                    f"Uploaded {success_count}/{total_files} file(s).\nSome files failed to upload.",
                     2  # Warning icon
                 )
             return 1

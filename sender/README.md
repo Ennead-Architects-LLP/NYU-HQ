@@ -1,13 +1,13 @@
-# HTML Report Sender
+# Multi-File Report Sender
 
-This folder contains a script that automatically sends the latest HTML report from your local machine to the NYU-HQ GitHub repository.
+This folder contains a script that automatically sends report files (HTML, CSS, JS, JSON, images) from your local machine to the NYU-HQ GitHub repository.
 
 ## How It Works
 
-1. The script finds the latest HTML file in your local reports folder
-2. Uploads it directly to GitHub via the GitHub Contents API
-3. The file is committed as `docs/index.html` in the repository
-4. The updated HTML is automatically published via GitHub Pages
+1. The script scans for all supported files in your local reports folder (HTML, CSS, JS, JSON, PNG, JPG)
+2. Uploads them directly to GitHub via the GitHub Contents API
+3. Files are committed to the `docs/` folder in the repository, preserving their original filenames
+4. The updated files are automatically published via GitHub Pages
 
 **Note**: Users do NOT need Git, Python, or any configuration. Just run the .exe!
 
@@ -79,7 +79,9 @@ dist\send_report.exe
 - ✅ No configuration needed by users
 - ✅ Token is embedded securely
 - ✅ No Python, Git, or anything else required
-- ✅ Handles files of any size (tested with 340KB+ HTML files)
+- ✅ Handles multiple file types (HTML, CSS, JS, JSON, PNG, JPG)
+- ✅ Uploads all files in one run
+- ✅ Preserves original filenames
 
 ## For End Users: How to Use
 
@@ -105,13 +107,13 @@ dist\send_report.exe
 
 The executable will:
 1. Auto-detect your Windows username
-2. Look for HTML files in:
+2. Look for report files (HTML, CSS, JS, JSON, images) in:
    ```
    C:\Users\{YOUR_USERNAME}\Documents\EnneadTab Ecosystem\EA_Dist\Apps\_revit\EnneaDuck.extension\EnneadTab Tailor.tab\Proj. 2534.panel\NYU HQ.pulldown\monitor_area.pushbutton\reports
    ```
-3. Find the most recently modified HTML file
-4. Upload it directly to GitHub
-5. The file is committed automatically with a timestamp
+3. Find all supported files (HTML, CSS, JS, JSON, PNG, JPG)
+4. Upload them all directly to GitHub's `docs/` folder with their original filenames
+5. Each file is committed automatically with a timestamp
 
 ### After Running
 
@@ -129,9 +131,9 @@ C:\Users\{YOUR_USERNAME}\Documents\EnneadTab Ecosystem\EA_Dist\Apps\_revit\Ennea
 
 Verify this path exists on your computer.
 
-### Error: "No HTML files found"
+### Error: "No report files found"
 
-Make sure there are `.html` files in the reports folder.
+Make sure there are supported files (`.html`, `.css`, `.js`, `.json`, `.png`, or `.jpg`) in the reports folder.
 
 ### HTTP Error 401 (Unauthorized)
 
