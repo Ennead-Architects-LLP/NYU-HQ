@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EnneadTab - Excel Area Requirements vs Revit Actual Areas Report</title>
     <style>
-        
+        Get CSS styles for the report - High-Tech Minimalist Theme"""
+        return """
         * {
             margin: 0;
             padding: 0;
@@ -2148,7 +2149,2436 @@
         .zero-area-row .col-area {
             color: #fbbf24;
         }
+        """
+    
+    def _get_javascript(self):
+        """Get JavaScript for interactive features"""
+        return """
+        // Load Chart.js and Three.js from CDN
+        const chartScript = document.createElement('script');
+        chartScript.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+        chartScript.onload = function() {
+            initializeChart();
+        };
+        document.head.appendChild(chartScript);
         
+        // Load Three.js for 3D viewer
+        const threeScript = document.createElement('script');
+        threeScript.src = 'https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js';
+        threeScript.onload = function() {
+            const controlsScript = document.createElement('script');
+            controlsScript.src = 'https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/controls/OrbitControls.js';
+            controlsScript.onload = function() {
+                initialize3DViewer();
+            };
+            document.head.appendChild(controlsScript);
+        };
+        document.head.appendChild(threeScript);
+        
+        // Global chart instances storage for proper cleanup
+        var chartInstances = {};
+        
+        function initializeChart() {
+            console.log('initializeChart called');
+            // Wait for DOM to be ready
+            if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+                    initializeComponents();
+                });
+            } else {
+                initializeComponents();
+            }
+        }
+        
+        function initialize3DViewer() {
+            console.log('initialize3DViewer called');
+            // Wait for DOM to be ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    initialize3DComponents();
+                });
+            } else {
+                initialize3DComponents();
+            }
+        }
+        
+        function initialize3DComponents() {
+            console.log('Initializing 3D components...');
+            const canvas = document.getElementById('viewer3d-canvas');
+            if (canvas && typeof THREE !== 'undefined') {
+                console.log('Creating 3D viewer...');
+                create3DViewer(canvas);
+            } else {
+                console.log('3D canvas or Three.js not available');
+            }
+        }
+        
+        function initializeComponents() {
+            console.log('Initializing components...');
+            
+            // Initialize context menu
+            initializeContextMenu();
+            
+            // Table sorting disabled per user request
+            // const table = document.querySelector('.comparison-table');
+            // if (table) {
+            //     console.log('Found comparison table, adding sorting...');
+            //     const headers = table.querySelectorAll('th');
+            //     headers.forEach((header, index) => {
+            //         header.style.cursor = 'pointer';
+            //         header.addEventListener('click', () => {
+            //             sortTable(table, index);
+            //         });
+            //     });
+            // } else {
+            //     console.log('No comparison table found');
+            // }
+            
+            // Initialize donut chart if canvas exists
+            const ctx = document.getElementById('areaFulfillmentChart');
+            if (ctx && typeof Chart !== 'undefined') {
+                console.log('Creating donut chart...');
+                createDonutChart(ctx);
+            } else {
+                console.log('Chart canvas or Chart.js not available');
+            }
+            
+            // Initialize department charts
+            initializeDepartmentCharts();
+            
+            // Initialize building section diagram
+            console.log('Creating building section...');
+            createBuildingSection();
+        }
+        
+        function initializeDepartmentCharts() {
+            console.log('Initializing department charts...');
+            
+            // Get chart data from script tag
+            const chartDataElement = document.getElementById('departmentChartData');
+            if (!chartDataElement) {
+                console.log('No department chart data found');
+                return;
+            }
+            
+            const chartData = JSON.parse(chartDataElement.textContent);
+            console.log('Department chart data:', chartData);
+            
+            // Create comparison chart
+            const comparisonCanvas = document.getElementById('deptComparisonChart');
+            if (comparisonCanvas) {
+                createDepartmentComparisonChart(comparisonCanvas, chartData);
+            }
+            
+            // Create percentage chart
+            const percentageCanvas = document.getElementById('deptPercentageChart');
+            if (percentageCanvas) {
+                createDepartmentPercentageChart(percentageCanvas, chartData);
+            }
+        }
+        
+        function createDepartmentComparisonChart(canvas, data) {
+            console.log('Creating department comparison chart...');
+            
+            // Destroy existing chart if it exists
+            var canvasId = canvas.id;
+            if (chartInstances[canvasId]) {
+                console.log('Destroying existing chart:', canvasId);
+                chartInstances[canvasId].destroy();
+            }
+            
+            // Create and store new chart instance
+            chartInstances[canvasId] = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels: data.departments,
+                    datasets: [
+                        {
+                            label: 'Target DGSF',
+                            data: data.target_dgsf,
+                            backgroundColor: data.colors.map(c => c + '40'),
+                            borderColor: data.colors,
+                            borderWidth: 2,
+                            borderRadius: 6,
+                            borderSkipped: false
+                        },
+                        {
+                            label: 'Actual DGSF',
+                            data: data.actual_dgsf,
+                            backgroundColor: data.colors.map(c => c + '80'),
+                            borderColor: data.colors,
+                            borderWidth: 2,
+                            borderRadius: 6,
+                            borderSkipped: false
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                color: '#e5e7eb',
+                                font: {
+                                    family: "'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                                    size: 14
+                                },
+                                padding: 16,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#1f2937',
+                            titleColor: '#f9fafb',
+                            bodyColor: '#e5e7eb',
+                            borderColor: '#374151',
+                            borderWidth: 1,
+                            padding: 12,
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.dataset.label || '';
+                                    const value = context.parsed.x;
+                                    return label + ': ' + value.toLocaleString() + ' SF';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: false,
+                            grid: {
+                                color: '#374151',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#9ca3af',
+                                font: {
+                                    family: "'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                                    size: 11
+                                },
+                                callback: function(value) {
+                                    return value.toLocaleString();
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Square Feet (SF)',
+                                color: '#9ca3af',
+                                font: {
+                                    family: "'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                                    size: 12,
+                                    weight: '500'
+                                }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#e5e7eb',
+                                font: {
+                                    family: "'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                                    size: 14,
+                                    weight: '400'
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+        
+        function createDepartmentPercentageChart(canvas, data) {
+            console.log('Creating department percentage chart...');
+            
+            // Destroy existing chart if it exists
+            var canvasId = canvas.id;
+            if (chartInstances[canvasId]) {
+                console.log('Destroying existing chart:', canvasId);
+                chartInstances[canvasId].destroy();
+            }
+            
+            // Color code based on percentage
+            const barColors = data.percentages.map(pct => {
+                if (Math.abs(pct) <= 5) return '#10b981'; // Green - on target
+                if (pct > 5) return '#f59e0b'; // Orange - over
+                return '#ef4444'; // Red - under
+            });
+            
+            // Create and store new chart instance
+            chartInstances[canvasId] = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels: data.departments,
+                    datasets: [{
+                        label: 'Fulfillment %',
+                        data: data.percentages,
+                        backgroundColor: barColors.map(c => c + '80'),
+                        borderColor: barColors,
+                        borderWidth: 2,
+                        borderRadius: 6,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#1f2937',
+                            titleColor: '#f9fafb',
+                            bodyColor: '#e5e7eb',
+                            borderColor: '#374151',
+                            borderWidth: 1,
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.parsed.x;
+                                    const status = Math.abs(value) <= 5 ? 'On Target' : 
+                                                   value > 5 ? 'Over' : 'Under';
+                                    return status + ': ' + (value > 0 ? '+' : '') + value.toFixed(1) + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: '#374151',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#9ca3af',
+                                font: {
+                                    family: "'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                                    size: 11
+                                },
+                                callback: function(value) {
+                                    return (value > 0 ? '+' : '') + value + '%';
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Percentage Difference',
+                                color: '#9ca3af',
+                                font: {
+                                    family: "'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                                    size: 12,
+                                    weight: '500'
+                                }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#e5e7eb',
+                                font: {
+                                    family: "'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                                    size: 14,
+                                    weight: '400'
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+        
+        // Fuzzy Search Functions
+        function levenshteinDistance(str1, str2) {
+            var s1 = str1.toLowerCase();
+            var s2 = str2.toLowerCase();
+            var len1 = s1.length;
+            var len2 = s2.length;
+            
+            var matrix = [];
+            for (var i = 0; i <= len1; i++) {
+                matrix[i] = [i];
+            }
+            for (var j = 0; j <= len2; j++) {
+                matrix[0][j] = j;
+            }
+            
+            for (var i = 1; i <= len1; i++) {
+                for (var j = 1; j <= len2; j++) {
+                    var cost = s1[i - 1] === s2[j - 1] ? 0 : 1;
+                    matrix[i][j] = Math.min(
+                        matrix[i - 1][j] + 1,
+                        matrix[i][j - 1] + 1,
+                        matrix[i - 1][j - 1] + cost
+                    );
+                }
+            }
+            
+            return matrix[len1][len2];
+        }
+        
+        function fuzzyMatch(query, target) {
+            if (!query || !target) return 0;
+            
+            var q = query.toLowerCase();
+            var t = target.toLowerCase();
+            
+            // Exact match gets highest score
+            if (t === q) return 1.0;
+            
+            // Starts with query
+            if (t.indexOf(q) === 0) return 0.9;
+            
+            // Contains query
+            if (t.indexOf(q) !== -1) return 0.7;
+            
+            // Use Levenshtein distance for fuzzy matching
+            var distance = levenshteinDistance(q, t);
+            var maxLen = Math.max(q.length, t.length);
+            
+            if (distance <= 2 && maxLen > 3) {
+                // Allow 1-2 character difference for typos
+                return 0.6 - (distance * 0.1);
+            }
+            
+            // Similarity score based on Levenshtein
+            var similarity = 1 - (distance / maxLen);
+            
+            if (similarity > 0.5) {
+                return similarity * 0.5; // Scale down partial matches
+            }
+            
+            return 0;
+        }
+        
+        function performSearch(query) {
+            if (!query || query.trim().length < 2) {
+                console.log('Search query too short:', query);
+                return [];
+            }
+            
+            console.log('Performing search for:', query);
+            var results = [];
+            var allNodes = document.querySelectorAll('[data-search-dept], [data-search-division], [data-search-function]');
+            console.log('Found', allNodes.length, 'searchable nodes');
+            
+            allNodes.forEach(function(node) {
+                var dept = node.getAttribute('data-search-dept') || '';
+                var division = node.getAttribute('data-search-division') || '';
+                var func = node.getAttribute('data-search-function') || '';
+                
+                // Skip nodes without any searchable content
+                if (!dept && !division && !func) return;
+                
+                // Calculate fuzzy match scores for each field
+                var deptScore = fuzzyMatch(query, dept);
+                var divScore = fuzzyMatch(query, division);
+                var funcScore = fuzzyMatch(query, func);
+                
+                // Overall score is the maximum of the three
+                var maxScore = Math.max(deptScore, divScore, funcScore);
+                
+                if (maxScore > 0.3) {
+                    results.push({
+                        node: node,
+                        department: dept,
+                        division: division,
+                        function: func,
+                        score: maxScore,
+                        matchedField: deptScore >= divScore && deptScore >= funcScore ? 'dept' : 
+                                      divScore >= funcScore ? 'division' : 'function'
+                    });
+                }
+            });
+            
+            // Sort by score descending
+            results.sort(function(a, b) {
+                return b.score - a.score;
+            });
+            
+            console.log('Search found', results.length, 'results');
+            
+            // Return top 10 results
+            return results.slice(0, 10);
+        }
+        
+        function highlightMatch(text, query) {
+            if (!query || !text) return text;
+            
+            var lowerText = text.toLowerCase();
+            var lowerQuery = query.toLowerCase();
+            var index = lowerText.indexOf(lowerQuery);
+            
+            if (index !== -1) {
+                var before = text.substring(0, index);
+                var match = text.substring(index, index + query.length);
+                var after = text.substring(index + query.length);
+                return before + '<span class="suggestion-match">' + match + '</span>' + after;
+            }
+            
+            return text;
+        }
+        
+        function displaySearchSuggestions(results, query) {
+            console.log('displaySearchSuggestions called with', results.length, 'results');
+            var suggestionsDiv = document.getElementById('searchSuggestions');
+            
+            if (!suggestionsDiv) {
+                console.error('searchSuggestions div not found!');
+                return;
+            }
+            
+            if (!results || results.length === 0) {
+                console.log('No results, showing no matches message');
+                suggestionsDiv.innerHTML = '<div class="no-results">No matches found</div>';
+                suggestionsDiv.classList.add('active');
+                return;
+            }
+            
+            var html = '';
+            
+            // Add "Do you mean..." header if there are results
+            if (results.length > 0) {
+                html += '<div class="suggestion-header">Do you mean...</div>';
+            }
+            
+            results.forEach(function(result, index) {
+                var dept = highlightMatch(result.department, query);
+                var div = highlightMatch(result.division, query);
+                var func = highlightMatch(result.function, query);
+                
+                var path = dept + ' | ' + div + ' | ' + func;
+                
+                html += '<div class="suggestion-item" data-index="' + index + '" onclick="selectSuggestion(' + index + ')">';
+                html += '<div class="suggestion-path">' + path + '</div>';
+                html += '</div>';
+            });
+            
+            suggestionsDiv.innerHTML = html;
+            suggestionsDiv.classList.add('active');
+            
+            console.log('Suggestions HTML set, classList:', suggestionsDiv.classList);
+            console.log('Suggestions display style:', window.getComputedStyle(suggestionsDiv).display);
+            console.log('Suggestions position:', window.getComputedStyle(suggestionsDiv).position);
+            console.log('Suggestions innerHTML length:', suggestionsDiv.innerHTML.length);
+            
+            // Store results globally for selection
+            window.currentSearchResults = results;
+        }
+        
+        function clearSearchSuggestions() {
+            var suggestionsDiv = document.getElementById('searchSuggestions');
+            suggestionsDiv.classList.remove('active');
+            suggestionsDiv.innerHTML = '';
+            window.currentSearchResults = [];
+        }
+        
+        function selectSuggestion(index) {
+            if (!window.currentSearchResults || !window.currentSearchResults[index]) {
+                return;
+            }
+            
+            var result = window.currentSearchResults[index];
+            navigateToNode(result.node);
+            
+            // Clear search
+            var searchInput = document.getElementById('searchInput');
+            searchInput.value = '';
+            clearSearchSuggestions();
+            
+            // Hide context menu
+            var contextMenu = document.getElementById('contextMenu');
+            contextMenu.classList.remove('active');
+            contextMenu.style.display = 'none';
+        }
+        
+        function navigateToNode(nodeElement) {
+            if (!nodeElement) return;
+            
+            // Expand all parent nodes
+            var parent = nodeElement.parentElement;
+            while (parent) {
+                if (parent.classList && parent.classList.contains('tree-node-children')) {
+                    // This is a children container, expand it
+                    parent.classList.remove('collapsed');
+                    parent.style.maxHeight = 'none';
+                    
+                    // Find and update the toggle icon
+                    var parentNode = parent.previousElementSibling;
+                    if (parentNode) {
+                        var icon = parentNode.querySelector('.tree-toggle-icon');
+                        if (icon) {
+                            icon.textContent = '▼';
+                            icon.classList.remove('collapsed');
+                        }
+                    }
+                }
+                parent = parent.parentElement;
+            }
+            
+            // Update all parent heights
+            setTimeout(function() {
+                var allExpanded = document.querySelectorAll('.tree-node-children:not(.collapsed)');
+                allExpanded.forEach(function(child) {
+                    child.style.maxHeight = 'none';
+                    var height = child.scrollHeight;
+                    child.style.maxHeight = height + 'px';
+                });
+            }, 50);
+            
+            // Scroll to the node
+            setTimeout(function() {
+                nodeElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+                
+                // Add highlight effect
+                nodeElement.classList.add('highlighted');
+                setTimeout(function() {
+                    nodeElement.classList.remove('highlighted');
+                }, 3000);
+            }, 200);
+        }
+        
+        // Context Menu Functions
+        function initializeContextMenu() {
+            const contextMenu = document.getElementById('contextMenu');
+            
+            if (!contextMenu) {
+                console.error('Context menu element not found');
+                return;
+            }
+            
+            // Show context menu on right-click anywhere on the page
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Get mouse position
+                var mouseX = e.clientX;
+                var mouseY = e.clientY;
+                
+                // Show menu first to get its dimensions
+                contextMenu.style.display = 'block';
+                contextMenu.classList.add('active');
+                
+                var menuWidth = contextMenu.offsetWidth;
+                var menuHeight = contextMenu.offsetHeight;
+                var windowWidth = window.innerWidth;
+                var windowHeight = window.innerHeight;
+                
+                // Calculate position - ensure menu stays within viewport
+                var left = mouseX;
+                var top = mouseY;
+                
+                // Adjust if menu would go off right edge
+                if (mouseX + menuWidth > windowWidth) {
+                    left = windowWidth - menuWidth - 10;
+                }
+                
+                // Adjust if menu would go off bottom edge
+                if (mouseY + menuHeight > windowHeight) {
+                    top = windowHeight - menuHeight - 10;
+                }
+                
+                // Ensure menu doesn't go off left or top edge
+                if (left < 10) left = 10;
+                if (top < 10) top = 10;
+                
+                // Position the context menu
+                contextMenu.style.left = left + 'px';
+                contextMenu.style.top = top + 'px';
+                
+                console.log('Context menu shown at:', left, top);
+            });
+            
+            // Hide context menu on regular click
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.context-menu')) {
+                    contextMenu.classList.remove('active');
+                    contextMenu.style.display = 'none';
+                    clearSearchSuggestions();
+                    var searchInput = document.getElementById('searchInput');
+                    if (searchInput) searchInput.value = '';
+                }
+            });
+            
+            // Hide context menu on scroll
+            document.addEventListener('scroll', function() {
+                contextMenu.classList.remove('active');
+                contextMenu.style.display = 'none';
+                clearSearchSuggestions();
+            });
+            
+            // Hide context menu on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    contextMenu.classList.remove('active');
+                    contextMenu.style.display = 'none';
+                    clearSearchSuggestions();
+                    var searchInput = document.getElementById('searchInput');
+                    if (searchInput) searchInput.value = '';
+                }
+            });
+            
+            // Search input event handlers
+            console.log('Setting up search handlers...');
+            var searchInput = document.getElementById('searchInput');
+            var searchSuggestions = document.getElementById('searchSuggestions');
+            console.log('searchInput element:', searchInput);
+            console.log('searchSuggestions element:', searchSuggestions);
+            
+            if (searchInput) {
+                console.log('Attaching search event listeners...');
+                // Prevent context menu from closing when clicking in search area
+                searchInput.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+                
+                searchSuggestions.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+                
+                // Real-time search as user types
+                searchInput.addEventListener('input', function(e) {
+                    var query = e.target.value;
+                    console.log('Search input changed:', query);
+                    
+                    if (!query || query.trim().length < 2) {
+                        clearSearchSuggestions();
+                        return;
+                    }
+                    
+                    var results = performSearch(query);
+                    displaySearchSuggestions(results, query);
+                });
+                
+                // Keyboard navigation
+                searchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        // Select first suggestion
+                        if (window.currentSearchResults && window.currentSearchResults.length > 0) {
+                            selectSuggestion(0);
+                        }
+                    } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        searchInput.value = '';
+                        clearSearchSuggestions();
+                    }
+                });
+                
+                // Focus search input when context menu opens
+                var observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.attributeName === 'class') {
+                            if (contextMenu.classList.contains('active')) {
+                                setTimeout(function() {
+                                    searchInput.focus();
+                                }, 100);
+                            } else {
+                                searchInput.value = '';
+                                clearSearchSuggestions();
+                            }
+                        }
+                    });
+                });
+                
+                observer.observe(contextMenu, {
+                    attributes: true,
+                    attributeFilter: ['class']
+                });
+                
+                console.log('Search event listeners attached successfully!');
+            } else {
+                console.error('searchInput element not found! Cannot attach search listeners.');
+            }
+            
+            console.log('Context menu initialized');
+        }
+        
+        function initialize3DComponents() {
+            console.log('Initializing 3D components...');
+            const canvas = document.getElementById('viewer3d-canvas');
+            if (canvas && typeof THREE !== 'undefined') {
+                console.log('Creating 3D viewer...');
+                create3DViewer(canvas);
+            } else {
+                console.log('3D canvas or Three.js not available');
+            }
+        }
+        
+        function createDonutChart(canvas) {
+            console.log('Creating donut chart...');
+            
+            // Destroy existing chart if it exists
+            var canvasId = canvas.id;
+            if (chartInstances[canvasId]) {
+                console.log('Destroying existing chart:', canvasId);
+                chartInstances[canvasId].destroy();
+            }
+            
+            // Calculate data from the table rows
+            let fulfilledArea = 0;
+            let totalRequiredArea = 0;
+            let mismatchedArea = 0;
+            let missingArea = 0;
+            
+            // Extract data from table rows
+            const tableRows = document.querySelectorAll('.comparison-table tbody tr');
+            console.log('Found table rows for chart:', tableRows.length);
+            
+            if (tableRows.length === 0) {
+                console.log('No table rows found, using demo data');
+                // Use demo data
+                fulfilledArea = 750000;
+                totalRequiredArea = 1000000;
+                mismatchedArea = 150000;
+                missingArea = 100000;
+            } else {
+            tableRows.forEach(row => {
+                const cells = row.cells;
+                if (cells.length >= 8) {
+                    const requiredArea = parseFloat(cells[5].textContent.replace(/[^0-9.-]/g, '')) || 0;
+                    const actualArea = parseFloat(cells[7].textContent.replace(/[^0-9.-]/g, '')) || 0;
+                    const status = cells[12].textContent.trim();
+                    
+                    totalRequiredArea += requiredArea;
+                    
+                    if (status.includes('Fulfilled')) {
+                        fulfilledArea += actualArea;
+                    } else if (status.includes('Partial') || status.includes('Excessive')) {
+                        mismatchedArea += actualArea;
+                    } else if (status.includes('Missing')) {
+                        missingArea += requiredArea; // Missing areas count as required area
+                    }
+                }
+            });
+            }
+            
+            // Calculate percentages
+            const totalArea = Math.max(totalRequiredArea, fulfilledArea + mismatchedArea);
+            const fulfilledPercentage = totalArea > 0 ? (fulfilledArea / totalArea * 100) : 0;
+            const mismatchedPercentage = totalArea > 0 ? (mismatchedArea / totalArea * 100) : 0;
+            const missingPercentage = totalArea > 0 ? (missingArea / totalArea * 100) : 0;
+            
+            // Create and store new chart instance
+            chartInstances[canvasId] = new Chart(canvas, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Fulfilled Areas', 'Mismatched Areas', 'Missing Areas'],
+                    datasets: [{
+                        data: [fulfilledPercentage, mismatchedPercentage, missingPercentage],
+                        backgroundColor: [
+                            '#10b981',  // Green for fulfilled
+                            '#f59e0b',  // Orange for mismatched  
+                            '#ef4444'   // Red for missing
+                        ],
+                        borderColor: [
+                            '#059669',
+                            '#d97706',
+                            '#dc2626'
+                        ],
+                        borderWidth: 2,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#e5e7eb',
+                                font: {
+                                    family: "'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                                    size: 14
+                                },
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#1f2937',
+                            titleColor: '#f9fafb',
+                            bodyColor: '#e5e7eb',
+                            borderColor: '#374151',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed;
+                                    return label + ': ' + value.toFixed(1) + '%';
+                                }
+                            }
+                        }
+                    },
+                    cutout: '60%',
+                    animation: {
+                        animateRotate: true,
+                        animateScale: true,
+                        duration: 2000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+        }
+        
+        function createBuildingSection(buildingSectionElement) {
+            // If no element provided, try to find it with default ID
+            var buildingSection = buildingSectionElement || document.getElementById('buildingSection');
+            
+            if (!buildingSection) {
+                console.log('Building section element not found');
+                return;
+            }
+            
+            console.log('Creating building section diagram...');
+            
+            // Find the legend element (could be scheme-specific or default)
+            var sectionLegend = null;
+            if (buildingSection.id) {
+                // Try to find scheme-specific legend first
+                var legendId = buildingSection.id.replace('buildingSection', 'sectionLegend');
+                sectionLegend = document.getElementById(legendId);
+            }
+            // Fall back to default legend if not found
+            if (!sectionLegend) {
+                sectionLegend = document.getElementById('sectionLegend');
+            }
+            
+            // Debug: Check if table exists
+            const table = document.querySelector('.comparison-table');
+            if (!table) {
+                console.log('Comparison table not found, showing demo content');
+                showDemoBuildingSection(buildingSection, sectionLegend);
+                return;
+            }
+            
+            // Extract level and department data from table
+            const levelData = {};
+            const departmentColors = {
+                'EMERGENCY': 'dept-emergency',
+                'INPATIENT CARE': 'dept-inpatient',
+                'DIAGNOSTIC AND TREATMENT': 'dept-diagnostic',
+                'MECHANICAL': 'dept-mechanical',
+                'ADMINISTRATION AND STAFF SUPPORT': 'dept-administration'
+            };
+            
+            const tableRows = document.querySelectorAll('.comparison-table tbody tr');
+            console.log('Found table rows:', tableRows.length);
+            
+            if (tableRows.length === 0) {
+                buildingSection.innerHTML = '<p style="color: #9ca3af; text-align: center; padding: 40px;">No data rows found in comparison table.</p>';
+                return;
+            }
+            
+            tableRows.forEach((row, rowIndex) => {
+                const cells = row.cells;
+                console.log(`Row ${rowIndex}: ${cells.length} cells`);
+                
+                if (cells.length >= 8) {
+                    const department = cells[0].textContent.trim(); // Department column
+                    const levelText = cells[5].textContent.trim(); // Level column (moved to position 5)
+                    const actualArea = parseFloat(cells[7].textContent.replace(/[^0-9.-]/g, '')) || 0; // Actual Area column
+                    
+                    console.log(`Row ${rowIndex}: Dept=${department}, Level=${levelText}, Area=${actualArea}`);
+                    
+                    // Extract level name and elevation from level text
+                    const levelMatch = levelText.match(/(Level \d+)/);
+                    if (levelMatch) {
+                        const levelName = levelMatch[1];
+                        
+                        if (!levelData[levelName]) {
+                            levelData[levelName] = {};
+                        }
+                        
+                        if (!levelData[levelName][department]) {
+                            levelData[levelName][department] = 0;
+                        }
+                        
+                        levelData[levelName][department] += actualArea;
+                    }
+                }
+            });
+            
+            console.log('Extracted level data:', levelData);
+            
+            // Sort levels by elevation (assuming Level 1, Level 2, etc.)
+            const sortedLevels = Object.keys(levelData).sort((a, b) => {
+                const aNum = parseInt(a.match(/\d+/)[0]);
+                const bNum = parseInt(b.match(/\d+/)[0]);
+                return aNum - bNum;
+            });
+            
+            console.log('Sorted levels:', sortedLevels);
+            
+            // Generate level stacks
+            let sectionHTML = '';
+            let legendHTML = '';
+            const usedDepartments = new Set();
+            
+            if (sortedLevels.length === 0) {
+                buildingSection.innerHTML = '<p style="color: #9ca3af; text-align: center; padding: 40px;">No level data found. Please check that areas have level information.</p>';
+                return;
+            }
+            
+            sortedLevels.forEach((levelName, index) => {
+                const departments = levelData[levelName];
+                const levelNum = levelName.match(/\d+/)[0];
+                const elevation = (parseInt(levelNum) * 10).toFixed(1); // Approximate elevation
+                
+                let pillsHTML = '';
+                Object.entries(departments).forEach(([dept, area]) => {
+                    if (area > 0) {
+                        const deptClass = departmentColors[dept.toUpperCase()] || 'dept-other';
+                        const areaSF = Math.round(area).toLocaleString();
+                        pillsHTML += `<div class="department-pill ${deptClass}" data-area="${areaSF} SF">${dept}</div>`;
+                        usedDepartments.add(dept);
+                    }
+                });
+                
+                if (pillsHTML) {
+                    sectionHTML += `
+                        <div class="level-stack">
+                            <div class="level-label">${levelName}</div>
+                            <div class="level-elevation">${elevation}'</div>
+                            <div class="department-pills">${pillsHTML}</div>
+                            ${index < sortedLevels.length - 1 ? '<div class="level-connector"></div>' : ''}
+                        </div>
+                    `;
+                }
+            });
+            
+            // Generate legend
+            usedDepartments.forEach(dept => {
+                const deptClass = departmentColors[dept.toUpperCase()] || 'dept-other';
+                legendHTML += `
+                    <div class="legend-item">
+                        <div class="legend-color ${deptClass}"></div>
+                        <span>${dept}</span>
+                    </div>
+                `;
+            });
+            
+            if (sectionHTML === '') {
+                // Fallback: Create a simple demo diagram
+                sectionHTML = `
+                    <div class="level-stack">
+                        <div class="level-label">Level 1</div>
+                        <div class="level-elevation">10.0'</div>
+                        <div class="department-pills">
+                            <div class="department-pill dept-emergency" data-area="2,500 SF">Emergency</div>
+                            <div class="department-pill dept-administration" data-area="1,200 SF">Administration</div>
+                        </div>
+                    </div>
+                    <div class="level-connector"></div>
+                    <div class="level-stack">
+                        <div class="level-label">Level 2</div>
+                        <div class="level-elevation">20.0'</div>
+                        <div class="department-pills">
+                            <div class="department-pill dept-inpatient" data-area="15,000 SF">Inpatient Care</div>
+                            <div class="department-pill dept-diagnostic" data-area="8,500 SF">Diagnostic & Treatment</div>
+                        </div>
+                    </div>
+                    <div class="level-connector"></div>
+                    <div class="level-stack">
+                        <div class="level-label">Level 3</div>
+                        <div class="level-elevation">30.0'</div>
+                        <div class="department-pills">
+                            <div class="department-pill dept-mechanical" data-area="3,200 SF">Mechanical</div>
+                        </div>
+                    </div>
+                `;
+                legendHTML = `
+                    <div class="legend-item">
+                        <div class="legend-color dept-emergency"></div>
+                        <span>Emergency</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color dept-administration"></div>
+                        <span>Administration</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color dept-inpatient"></div>
+                        <span>Inpatient Care</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color dept-diagnostic"></div>
+                        <span>Diagnostic & Treatment</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color dept-mechanical"></div>
+                        <span>Mechanical</span>
+                    </div>
+                `;
+            }
+            
+            buildingSection.innerHTML = sectionHTML;
+            if (sectionLegend) {
+                sectionLegend.innerHTML = legendHTML;
+            }
+        }
+        
+        function showDemoBuildingSection(buildingSection, sectionLegend) {
+            console.log('Showing demo building section');
+            const demoHTML = `
+                <div class="level-stack">
+                    <div class="level-label">Level 1</div>
+                    <div class="level-elevation">10.0'</div>
+                    <div class="department-pills">
+                        <div class="department-pill dept-emergency" data-area="2,500 SF">Emergency</div>
+                        <div class="department-pill dept-administration" data-area="1,200 SF">Administration</div>
+                    </div>
+                </div>
+                <div class="level-connector"></div>
+                <div class="level-stack">
+                    <div class="level-label">Level 2</div>
+                    <div class="level-elevation">20.0'</div>
+                    <div class="department-pills">
+                        <div class="department-pill dept-inpatient" data-area="15,000 SF">Inpatient Care</div>
+                        <div class="department-pill dept-diagnostic" data-area="8,500 SF">Diagnostic & Treatment</div>
+                    </div>
+                </div>
+                <div class="level-connector"></div>
+                <div class="level-stack">
+                    <div class="level-label">Level 3</div>
+                    <div class="level-elevation">30.0'</div>
+                    <div class="department-pills">
+                        <div class="department-pill dept-mechanical" data-area="3,200 SF">Mechanical</div>
+                    </div>
+                </div>
+            `;
+            
+            const demoLegend = `
+                <div class="legend-item">
+                    <div class="legend-color dept-emergency"></div>
+                    <span>Emergency</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color dept-administration"></div>
+                    <span>Administration</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color dept-inpatient"></div>
+                    <span>Inpatient Care</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color dept-diagnostic"></div>
+                    <span>Diagnostic & Treatment</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color dept-mechanical"></div>
+                    <span>Mechanical</span>
+                </div>
+            `;
+            
+            buildingSection.innerHTML = demoHTML;
+            if (sectionLegend) {
+                sectionLegend.innerHTML = demoLegend;
+            }
+        }
+        
+        function create3DViewer(canvas) {
+            console.log('Initializing 3D viewer...');
+            
+            if (typeof THREE === 'undefined') {
+                console.error('Three.js not loaded');
+                canvas.parentElement.innerHTML = '<p style="color: #ef4444; text-align: center; padding: 40px;">Three.js library failed to load. Please refresh the page.</p>';
+                return;
+            }
+            
+            // Scene setup
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0f172a);
+            
+            // Camera setup
+            const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+            camera.position.set(50, 50, 50);
+            
+            // Renderer setup
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+            renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            
+            // Controls
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.enableZoom = true;
+            controls.enablePan = true;
+            
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(50, 100, 50);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 2048;
+            directionalLight.shadow.mapSize.height = 2048;
+            scene.add(directionalLight);
+            
+            // Extract data from table
+            const buildingData = extractBuildingData();
+            
+            // Create building geometry
+            createBuildingGeometry(scene, buildingData);
+            
+            // Setup controls
+            setup3DControls(controls, scene, camera, renderer);
+            
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animate();
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                const width = canvas.clientWidth;
+                const height = canvas.clientHeight;
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+                renderer.setSize(width, height);
+            });
+        }
+        
+        function extractBuildingData() {
+            console.log('Extracting building data for 3D viewer...');
+            const levelData = {};
+            const tableRows = document.querySelectorAll('.comparison-table tbody tr');
+            
+            console.log('Found table rows for 3D:', tableRows.length);
+            
+            if (tableRows.length === 0) {
+                console.log('No table rows found, creating demo data');
+                // Create demo data for 3D viewer
+                return {
+                    'Level 1': {
+                        level: 1,
+                        elevation: 10,
+                        departments: {
+                            'Emergency': { requiredArea: 2500, actualArea: 2500, status: 'Fulfilled' },
+                            'Administration': { requiredArea: 1200, actualArea: 1200, status: 'Fulfilled' }
+                        }
+                    },
+                    'Level 2': {
+                        level: 2,
+                        elevation: 20,
+                        departments: {
+                            'Inpatient Care': { requiredArea: 15000, actualArea: 18000, status: 'Excessive' },
+                            'Diagnostic & Treatment': { requiredArea: 8500, actualArea: 7500, status: 'Partial' }
+                        }
+                    },
+                    'Level 3': {
+                        level: 3,
+                        elevation: 30,
+                        departments: {
+                            'Mechanical': { requiredArea: 3200, actualArea: 3200, status: 'Fulfilled' }
+                        }
+                    }
+                };
+            }
+            
+            tableRows.forEach(row => {
+                const cells = row.cells;
+                if (cells.length >= 8) {
+                    const department = cells[0].textContent.trim();
+                    const levelText = cells[5].textContent.trim();
+                    const requiredArea = parseFloat(cells[4].textContent.replace(/[^0-9.-]/g, '')) || 0;
+                    const actualArea = parseFloat(cells[7].textContent.replace(/[^0-9.-]/g, '')) || 0;
+                    const status = cells[12].textContent.trim();
+                    
+                    const levelMatch = levelText.match(/(Level \d+)/);
+                    if (levelMatch) {
+                        const levelName = levelMatch[1];
+                        const levelNum = parseInt(levelName.match(/\d+/)[0]);
+                        
+                        if (!levelData[levelName]) {
+                            levelData[levelName] = {
+                                level: levelNum,
+                                elevation: levelNum * 10,
+                                departments: {}
+                            };
+                        }
+                        
+                        if (!levelData[levelName].departments[department]) {
+                            levelData[levelName].departments[department] = {
+                                requiredArea: 0,
+                                actualArea: 0,
+                                status: status
+                            };
+                        }
+                        
+                        levelData[levelName].departments[department].requiredArea += requiredArea;
+                        levelData[levelName].departments[department].actualArea += actualArea;
+                    }
+                }
+            });
+            
+            console.log('Extracted 3D building data:', levelData);
+            return levelData;
+        }
+        
+        function createBuildingGeometry(scene, buildingData) {
+            const levels = Object.keys(buildingData).sort((a, b) => {
+                return buildingData[a].level - buildingData[b].level;
+            });
+            
+            levels.forEach((levelName, levelIndex) => {
+                const levelInfo = buildingData[levelName];
+                const elevation = levelInfo.elevation;
+                
+                // Create floor plane
+                const floorGeometry = new THREE.PlaneGeometry(100, 100);
+                const floorMaterial = new THREE.MeshLambertMaterial({ 
+                    color: 0x374151,
+                    transparent: true,
+                    opacity: 0.3
+                });
+                const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+                floor.rotation.x = -Math.PI / 2;
+                floor.position.y = elevation;
+                scene.add(floor);
+                
+                // Create department zones
+                const departments = Object.keys(levelInfo.departments);
+                departments.forEach((dept, deptIndex) => {
+                    const deptData = levelInfo.departments[dept];
+                    const compliance = calculateCompliance(deptData.actualArea, deptData.requiredArea);
+                    const color = getComplianceColor(compliance);
+                    
+                    // Create department box
+                    const boxGeometry = new THREE.BoxGeometry(20, 5, 20);
+                    const boxMaterial = new THREE.MeshLambertMaterial({ 
+                        color: color,
+                        transparent: true,
+                        opacity: 0.8
+                    });
+                    const box = new THREE.Mesh(boxGeometry, boxMaterial);
+                    
+                    // Position boxes in a grid
+                    const x = (deptIndex % 5 - 2) * 22;
+                    const z = Math.floor(deptIndex / 5) * 22 - 22;
+                    box.position.set(x, elevation + 2.5, z);
+                    
+                    // Add department label
+                    const textGeometry = new THREE.PlaneGeometry(18, 3);
+                    const textMaterial = new THREE.MeshBasicMaterial({ 
+                        color: 0xffffff,
+                        transparent: true,
+                        opacity: 0.9
+                    });
+                    const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+                    textMesh.position.set(x, elevation + 6, z);
+                    scene.add(textMesh);
+                    
+                    // Store metadata
+                    box.userData = {
+                        department: dept,
+                        level: levelName,
+                        compliance: compliance,
+                        requiredArea: deptData.requiredArea,
+                        actualArea: deptData.actualArea
+                    };
+                    
+                    scene.add(box);
+                });
+            });
+        }
+        
+        function calculateCompliance(actual, required) {
+            if (required === 0) return 0;
+            return Math.min(actual / required, 1.5); // Cap at 150% for visualization
+        }
+        
+        function getComplianceColor(compliance) {
+            if (compliance >= 0.9) return 0x10b981; // Green - Excellent
+            if (compliance >= 0.7) return 0x84cc16; // Light Green - Good
+            if (compliance >= 0.5) return 0xeab308; // Yellow - Fair
+            if (compliance >= 0.3) return 0xf97316; // Orange - Poor
+            return 0xef4444; // Red - Critical
+        }
+        
+        function setup3DControls(controls, scene, camera, renderer) {
+            // Control button handlers
+            const controlButtons = document.querySelectorAll('.control-btn');
+            controlButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    controlButtons.forEach(b => b.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    const mode = this.dataset.mode;
+                    switch(mode) {
+                        case 'compliance':
+                            updateHeatmapMode(scene, 'compliance');
+                            break;
+                        case 'departments':
+                            updateHeatmapMode(scene, 'departments');
+                            break;
+                        case 'areas':
+                            updateHeatmapMode(scene, 'areas');
+                            break;
+                        case 'reset':
+                            resetCameraView(controls, camera);
+                            break;
+                    }
+                });
+            });
+            
+            // Click handler for object selection
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+            
+            renderer.domElement.addEventListener('click', function(event) {
+                const rect = renderer.domElement.getBoundingClientRect();
+                mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+                
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(scene.children, true);
+                
+                if (intersects.length > 0) {
+                    const object = intersects[0].object;
+                    if (object.userData && object.userData.department) {
+                        showObjectInfo(object.userData);
+                    }
+                }
+            });
+        }
+        
+        function updateHeatmapMode(scene, mode) {
+            // Update legend
+            const legendItems = document.getElementById('viewer3d-legend');
+            let legendHTML = '';
+            
+            if (mode === 'compliance') {
+                legendHTML = `
+                    <div class="legend-item">
+                        <div class="legend-color heatmap-excellent"></div>
+                        <span>Excellent (90%+)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color heatmap-good"></div>
+                        <span>Good (70-89%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color heatmap-fair"></div>
+                        <span>Fair (50-69%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color heatmap-poor"></div>
+                        <span>Poor (30-49%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color heatmap-critical"></div>
+                        <span>Critical (<30%)</span>
+                    </div>
+                `;
+            } else if (mode === 'departments') {
+                // Department color legend would go here
+                legendHTML = `<div class="legend-item"><span>Department View Mode</span></div>`;
+            } else if (mode === 'areas') {
+                legendHTML = `<div class="legend-item"><span>Area Density View Mode</span></div>`;
+            }
+            
+            legendItems.innerHTML = legendHTML;
+        }
+        
+        function resetCameraView(controls, camera) {
+            camera.position.set(50, 50, 50);
+            controls.target.set(0, 0, 0);
+            controls.update();
+        }
+        
+        function showObjectInfo(userData) {
+            const infoPanel = document.querySelector('.info-panel');
+            infoPanel.innerHTML = `
+                <h4>${userData.department}</h4>
+                <p><strong>Level:</strong> ${userData.level}</p>
+                <p><strong>Required Area:</strong> ${userData.requiredArea.toLocaleString()} SF</p>
+                <p><strong>Actual Area:</strong> ${userData.actualArea.toLocaleString()} SF</p>
+                <p><strong>Compliance:</strong> ${(userData.compliance * 100).toFixed(1)}%</p>
+            `;
+        }
+        
+        // Toggle department collapse
+        function toggleDepartment(deptId) {
+            const deptRows = document.querySelectorAll('.dept-row[data-dept="' + deptId + '"]');
+            const deptHeader = document.querySelector('.department-header[data-dept-id="' + deptId + '"]');
+            const icon = document.getElementById('icon_' + deptId);
+            
+            deptRows.forEach(row => {
+                row.classList.toggle('collapsed');
+            });
+            
+            deptHeader.classList.toggle('collapsed');
+        }
+        
+        // Collapse all departments
+        function collapseAllDepartments() {
+            const allDeptHeaders = document.querySelectorAll('.department-header');
+            allDeptHeaders.forEach(header => {
+                const deptId = header.getAttribute('data-dept-id');
+                const deptRows = document.querySelectorAll('.dept-row[data-dept="' + deptId + '"]');
+                
+                // Collapse if not already collapsed
+                if (!header.classList.contains('collapsed')) {
+                    deptRows.forEach(row => row.classList.add('collapsed'));
+                    header.classList.add('collapsed');
+                }
+            });
+        }
+        
+        // Expand all departments
+        function expandAllDepartments() {
+            const allDeptHeaders = document.querySelectorAll('.department-header');
+            allDeptHeaders.forEach(header => {
+                const deptId = header.getAttribute('data-dept-id');
+                const deptRows = document.querySelectorAll('.dept-row[data-dept="' + deptId + '"]');
+                
+                // Expand if collapsed
+                if (header.classList.contains('collapsed')) {
+                    deptRows.forEach(row => row.classList.remove('collapsed'));
+                    header.classList.remove('collapsed');
+                }
+            });
+        }
+        
+        // Unified functions to control TreeView
+        function expandAllViews() {
+            // Expand TreeView nodes
+            expandAllTreeNodes();
+            
+            // Also expand department sections (for backward compatibility)
+            expandAllDepartments();
+            
+            // Hide context menu
+            var menu = document.getElementById('contextMenu');
+            menu.classList.remove('active');
+            menu.style.display = 'none';
+        }
+        
+        function collapseAllViews() {
+            // Collapse TreeView nodes
+            collapseAllTreeNodes();
+            
+            // Also collapse department sections (for backward compatibility)
+            collapseAllDepartments();
+            
+            // Hide context menu
+            var menu = document.getElementById('contextMenu');
+            menu.classList.remove('active');
+            menu.style.display = 'none';
+        }
+        
+        // Return to top of page
+        function returnToTop() {
+            console.log('Return to top clicked');
+            
+            // Try smooth scroll first, fallback to instant scroll
+            try {
+                window.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: 'smooth'
+                });
+            } catch (e) {
+                // Fallback for older browsers
+                window.scrollTo(0, 0);
+            }
+            
+            // Also scroll body and html elements (for compatibility)
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+            
+            // Hide context menu
+            var menu = document.getElementById('contextMenu');
+            if (menu) {
+                menu.classList.remove('active');
+                menu.style.display = 'none';
+            }
+            
+            console.log('Scrolled to top, current position:', window.scrollY);
+        }
+        
+        function sortTable(table, columnIndex) {
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            
+            rows.sort((a, b) => {
+                const aValue = a.cells[columnIndex].textContent.trim();
+                const bValue = b.cells[columnIndex].textContent.trim();
+                
+                const aNum = parseFloat(aValue.replace(/[^0-9.-]/g, ''));
+                const bNum = parseFloat(bValue.replace(/[^0-9.-]/g, ''));
+                
+                if (!isNaN(aNum) && !isNaN(bNum)) {
+                    return aNum - bNum;
+                }
+                
+                return aValue.localeCompare(bValue);
+            });
+            
+            rows.forEach(row => tbody.appendChild(row));
+        }
+        
+        // ========== Minimap Navigation Functions ==========
+        
+        // Toggle minimap visibility
+        function toggleMinimap() {
+            const minimap = document.getElementById('minimapNav');
+            if (minimap) {
+                minimap.classList.toggle('hidden');
+            }
+        }
+        
+        // Scroll to a specific section
+        function scrollToSection(sectionClass) {
+            console.log('Scrolling to section:', sectionClass);
+            
+            // Try to find element by class first
+            var section = document.querySelector('.' + sectionClass);
+            
+            // If not found by class, try by ID
+            if (!section) {
+                section = document.getElementById(sectionClass);
+            }
+            
+            // If still not found, try finding header or section containing the class
+            if (!section) {
+                section = document.querySelector('[class*="' + sectionClass + '"]');
+            }
+            
+            if (section) {
+                console.log('Section found:', section, 'offsetTop:', section.offsetTop);
+                var headerOffset = 80; // Offset for fixed elements
+                var targetPosition = section.offsetTop - headerOffset;
+                
+                console.log('Scrolling smoothly to position:', targetPosition);
+                
+                // Use smooth scroll behavior
+                try {
+                    window.scrollTo({
+                        top: targetPosition,
+                        left: 0,
+                        behavior: 'smooth'
+                    });
+                } catch (e) {
+                    // Fallback for older browsers - instant scroll
+                    console.log('Smooth scroll not supported, using fallback');
+                    document.documentElement.scrollTop = targetPosition;
+                    document.body.scrollTop = targetPosition;
+                }
+                
+                // Update minimap state after animation completes
+                setTimeout(function() {
+                    updateMinimapActiveState();
+                }, 800);
+            } else {
+                console.error('Section not found:', sectionClass);
+            }
+        }
+        
+        // Update active state of minimap items based on scroll position
+        function updateMinimapActiveState() {
+            var sections = [
+                'report-header',
+                'department-summary-section',
+                'tree-view-section',
+                'unmatched-section',
+                'summary-section',
+                'status-summary'
+            ];
+            
+            var scrollPosition = window.scrollY + 200; // Offset for detection
+            var activeSection = null;
+            
+            // Find which section is currently in view
+            for (var i = 0; i < sections.length; i++) {
+                var sectionClass = sections[i];
+                var section = document.querySelector('.' + sectionClass);
+                
+                if (!section) {
+                    section = document.getElementById(sectionClass);
+                }
+                
+                if (!section) {
+                    section = document.querySelector('[class*="' + sectionClass + '"]');
+                }
+                
+                if (section) {
+                    var sectionTop = section.offsetTop;
+                    var sectionBottom = sectionTop + section.offsetHeight;
+                    
+                    if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                        activeSection = sectionClass;
+                        break;
+                    }
+                }
+            }
+            
+            // Update active class on minimap items
+            var minimapItems = document.querySelectorAll('.minimap-item');
+            for (var j = 0; j < minimapItems.length; j++) {
+                var item = minimapItems[j];
+                var itemSection = item.getAttribute('data-section');
+                if (itemSection === activeSection) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            }
+        }
+        
+        // Initialize minimap functionality
+        function initializeMinimap() {
+            console.log('Initializing minimap navigation...');
+            
+            const minimap = document.getElementById('minimapNav');
+            const minimapItems = document.querySelectorAll('.minimap-item');
+            
+            console.log('Minimap found:', minimap);
+            console.log('Minimap items found:', minimapItems.length);
+            
+            // Update active state on scroll
+            window.addEventListener('scroll', function() {
+                updateMinimapActiveState();
+            });
+            
+            // Set initial active state
+            updateMinimapActiveState();
+            
+            console.log('Minimap navigation initialized successfully');
+        }
+        
+        // Call minimap initialization after DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeMinimap);
+        } else {
+            initializeMinimap();
+        }
+        
+        // ========== EnneadTab Logo Parallax Effect ==========
+        
+        function initializeLogoParallax() {
+            const logo = document.getElementById('enneadLogo');
+            if (!logo) {
+                console.log('Logo element not found');
+                return;
+            }
+            
+            let lastScrollY = window.scrollY;
+            let currentY = 0;
+            let scrollVelocity = 0;
+            const dampingFactor = 0.15; // How much the logo moves with scroll (lower = less movement)
+            const returnSpeed = 0.08; // How fast it returns to original position (lower = slower)
+            
+            // Update on scroll - calculate scroll velocity
+            window.addEventListener('scroll', function() {
+                const currentScrollY = window.scrollY;
+                scrollVelocity = (currentScrollY - lastScrollY) * dampingFactor;
+                lastScrollY = currentScrollY;
+            }, { passive: true });
+            
+            // Smooth animation loop
+            function animateLogo() {
+                // Apply scroll velocity to current position (creates lag effect)
+                // Invert velocity so logo lags behind: when scrolling down, logo stays up
+                currentY -= scrollVelocity;
+                
+                // Gradually reduce velocity
+                scrollVelocity *= 0.85;
+                
+                // Pull logo back to original position (0)
+                currentY += (0 - currentY) * returnSpeed;
+                
+                // Apply transform - move logo based on scroll lag
+                logo.style.transform = 'translateY(' + currentY + 'px)';
+                
+                // Continue animation
+                requestAnimationFrame(animateLogo);
+            }
+            
+            // Start animation
+            animateLogo();
+            
+            console.log('Logo parallax effect initialized');
+        }
+        
+        // Initialize logo parallax after DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeLogoParallax);
+        } else {
+            initializeLogoParallax();
+        }
+        
+        // Tree View Functions
+        function updateParentHeights(element) {
+            // Traverse up and update all parent .tree-node-children heights
+            var parent = element.parentElement;
+            while (parent) {
+                if (parent.classList && parent.classList.contains('tree-node-children')) {
+                    if (!parent.classList.contains('collapsed')) {
+                        parent.style.maxHeight = parent.scrollHeight + 'px';
+                    }
+                }
+                parent = parent.parentElement;
+            }
+        }
+        
+        function toggleTreeNode(nodeId) {
+            const icon = document.getElementById('tree_icon_' + nodeId);
+            const children = document.getElementById('tree_children_' + nodeId);
+            
+            if (!children) return;
+            
+            if (children.classList.contains('collapsed')) {
+                // Expand
+                children.classList.remove('collapsed');
+                // Need to temporarily set to 'none' to get true scrollHeight
+                var currentMaxHeight = children.style.maxHeight;
+                children.style.maxHeight = 'none';
+                var height = children.scrollHeight;
+                children.style.maxHeight = currentMaxHeight;
+                
+                // Trigger reflow and set the height
+                setTimeout(function() {
+                    children.style.maxHeight = height + 'px';
+                }, 0);
+                
+                if (icon) {
+                    icon.classList.remove('collapsed');
+                    icon.textContent = '▼';
+                }
+                
+                // Update parent heights after a short delay
+                setTimeout(function() {
+                    updateParentHeights(children);
+                }, 50);
+            } else {
+                // Collapse
+                children.classList.add('collapsed');
+                children.style.maxHeight = '0';
+                if (icon) {
+                    icon.classList.add('collapsed');
+                    icon.textContent = '▶';
+                }
+                
+                // Update parent heights
+                setTimeout(function() {
+                    updateParentHeights(children);
+                }, 50);
+            }
+        }
+        
+        function expandAllTreeNodes() {
+            const allChildren = document.querySelectorAll('.tree-node-children');
+            const allIcons = document.querySelectorAll('.tree-toggle-icon');
+            
+            // First, remove collapsed class from all
+            allChildren.forEach(function(child) {
+                child.classList.remove('collapsed');
+            });
+            
+            // Set all icons
+            allIcons.forEach(function(icon) {
+                icon.classList.remove('collapsed');
+                icon.textContent = '▼';
+            });
+            
+            // Set all to maxHeight none to allow natural expansion
+            allChildren.forEach(function(child) {
+                child.style.maxHeight = 'none';
+            });
+            
+            // Force reflow
+            void document.body.offsetHeight;
+            
+            // Now set the calculated heights from deepest to shallowest
+            setTimeout(function() {
+                var childrenArray = Array.prototype.slice.call(allChildren);
+                
+                // Find depth of each element
+                var childrenWithDepth = childrenArray.map(function(child) {
+                    var depth = 0;
+                    var parent = child.parentElement;
+                    while (parent) {
+                        if (parent.classList.contains('tree-node-children')) {
+                            depth++;
+                        }
+                        parent = parent.parentElement;
+                    }
+                    return { element: child, depth: depth };
+                });
+                
+                // Sort by depth descending (deepest first)
+                childrenWithDepth.sort(function(a, b) {
+                    return b.depth - a.depth;
+                });
+                
+                // Set heights starting from deepest
+                childrenWithDepth.forEach(function(item) {
+                    var child = item.element;
+                    child.style.maxHeight = 'none';
+                    var height = child.scrollHeight;
+                    child.style.maxHeight = height + 'px';
+                });
+                
+                // Final pass after another reflow
+                setTimeout(function() {
+                    childrenWithDepth.forEach(function(item) {
+                        var child = item.element;
+                        child.style.maxHeight = 'none';
+                        var height = child.scrollHeight;
+                        child.style.maxHeight = height + 'px';
+                    });
+                }, 50);
+            }, 10);
+        }
+        
+        function collapseAllTreeNodes() {
+            const allChildren = document.querySelectorAll('.tree-node-children');
+            const allIcons = document.querySelectorAll('.tree-toggle-icon');
+            
+            allChildren.forEach(function(child) {
+                child.classList.add('collapsed');
+                child.style.maxHeight = '0';
+            });
+            
+            allIcons.forEach(function(icon) {
+                icon.classList.add('collapsed');
+                icon.textContent = '▶';
+            });
+        }
+        
+        // Initialize tree view - set initial max-height for all children
+        function initializeTreeView() {
+            const allChildren = document.querySelectorAll('.tree-node-children');
+            allChildren.forEach(function(child) {
+                // Set initial max-height based on content
+                child.style.maxHeight = child.scrollHeight + 'px';
+            });
+            
+            console.log('Tree view initialized');
+        }
+        
+        // Call tree view initialization after DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeTreeView);
+        } else {
+            initializeTreeView();
+        }
+        
+        // ============================================================================
+        // SCHEME SWITCHING FUNCTIONALITY
+        // ============================================================================
+        
+        /**
+         * Switch to a different area scheme
+         * @param {string} schemeId - The safe scheme ID (e.g., "DGSF_Scheme_Opt1")
+         */
+        function switchToScheme(schemeId) {
+            console.log('Switching to scheme:', schemeId);
+            
+            // Hide all scheme contents
+            var allSchemes = document.querySelectorAll('.scheme-content');
+            for (var i = 0; i < allSchemes.length; i++) {
+                allSchemes[i].classList.remove('active');
+            }
+            
+            // Show selected scheme
+            var targetScheme = document.getElementById('scheme-' + schemeId);
+            if (targetScheme) {
+                targetScheme.classList.add('active');
+                
+                // Update URL hash without page reload
+                if (history.pushState) {
+                    history.pushState(null, null, '#' + schemeId);
+                } else {
+                    location.hash = '#' + schemeId;
+                }
+                
+                // Update navigation highlighting
+                updateSchemeNavigation(schemeId);
+                
+                // Re-initialize visualizations for the newly active scheme
+                initializeSchemeVisualizations(targetScheme);
+                
+                // Scroll to top smoothly
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                console.log('Switched to scheme:', schemeId);
+            } else {
+                console.error('Scheme not found:', schemeId);
+            }
+        }
+        
+        /**
+         * Initialize or re-initialize all visualizations within a scheme
+         * @param {HTMLElement} schemeElement - The scheme content element
+         */
+        function initializeSchemeVisualizations(schemeElement) {
+            console.log('Initializing visualizations for scheme:', schemeElement.id);
+            
+            // Check if Chart.js is loaded
+            if (typeof Chart === 'undefined') {
+                console.warn('Chart.js not loaded yet, skipping chart initialization');
+                return;
+            }
+            
+            // Find and initialize department charts within this scheme
+            var chartDataElement = schemeElement.querySelector('[id^="departmentChartData"]');
+            if (chartDataElement) {
+                try {
+                    var chartData = JSON.parse(chartDataElement.textContent);
+                    console.log('Found chart data for scheme:', chartData);
+                    
+                    // Initialize comparison chart (will destroy existing if present)
+                    var comparisonCanvas = schemeElement.querySelector('[id^="deptComparisonChart"]');
+                    if (comparisonCanvas) {
+                        createDepartmentComparisonChart(comparisonCanvas, chartData);
+                    }
+                    
+                    // Initialize percentage chart (will destroy existing if present)
+                    var percentageCanvas = schemeElement.querySelector('[id^="deptPercentageChart"]');
+                    if (percentageCanvas) {
+                        createDepartmentPercentageChart(percentageCanvas, chartData);
+                    }
+                } catch (e) {
+                    console.error('Error parsing chart data:', e);
+                }
+            }
+            
+            // Re-initialize building section diagram if present
+            var buildingSection = schemeElement.querySelector('[id^="buildingSection"]');
+            if (buildingSection) {
+                createBuildingSection(buildingSection);
+            }
+            
+            console.log('Visualizations initialized for scheme');
+        }
+        
+        /**
+         * Update active state of scheme navigation items
+         * @param {string} activeSchemeId - The ID of the active scheme
+         */
+        function updateSchemeNavigation(activeSchemeId) {
+            var schemeSelectors = document.querySelectorAll('.scheme-selector');
+            for (var i = 0; i < schemeSelectors.length; i++) {
+                var selector = schemeSelectors[i];
+                var selectorScheme = selector.getAttribute('data-scheme');
+                
+                if (selectorScheme === activeSchemeId) {
+                    selector.classList.add('active');
+                } else {
+                    selector.classList.remove('active');
+                }
+            }
+        }
+        
+        /**
+         * Initialize scheme from URL hash on page load
+         */
+        function initSchemeFromHash() {
+            var hash = window.location.hash.substring(1); // Remove the '#'
+            var activeScheme = null;
+            
+            if (hash) {
+                console.log('Loading scheme from URL hash:', hash);
+                
+                // Check if scheme exists
+                var targetScheme = document.getElementById('scheme-' + hash);
+                if (targetScheme) {
+                    // Hide all schemes first
+                    var allSchemes = document.querySelectorAll('.scheme-content');
+                    for (var i = 0; i < allSchemes.length; i++) {
+                        allSchemes[i].classList.remove('active');
+                    }
+                    
+                    // Show target scheme
+                    targetScheme.classList.add('active');
+                    updateSchemeNavigation(hash);
+                    activeScheme = targetScheme;
+                } else {
+                    console.warn('Scheme from hash not found:', hash);
+                    // Fall back to first scheme
+                    var firstScheme = document.querySelector('.scheme-content');
+                    if (firstScheme) {
+                        firstScheme.classList.add('active');
+                        activeScheme = firstScheme;
+                    }
+                }
+            } else {
+                // No hash - ensure first scheme is active
+                var firstScheme = document.querySelector('.scheme-content');
+                if (firstScheme) {
+                    firstScheme.classList.add('active');
+                    var firstSchemeId = firstScheme.id.replace('scheme-', '');
+                    updateSchemeNavigation(firstSchemeId);
+                    activeScheme = firstScheme;
+                }
+            }
+            
+            // Initialize visualizations for the active scheme
+            if (activeScheme) {
+                // Wait for Chart.js to load before initializing
+                if (typeof Chart !== 'undefined') {
+                    initializeSchemeVisualizations(activeScheme);
+                } else {
+                    // Chart.js not loaded yet, wait for it
+                    console.log('Waiting for Chart.js to load before initializing scheme visualizations...');
+                    var checkChartInterval = setInterval(function() {
+                        if (typeof Chart !== 'undefined') {
+                            clearInterval(checkChartInterval);
+                            console.log('Chart.js loaded, initializing scheme visualizations');
+                            initializeSchemeVisualizations(activeScheme);
+                        }
+                    }, 100);
+                }
+            }
+        }
+        
+        /**
+         * Handle browser back/forward buttons
+         */
+        function handleHashChange() {
+            var hash = window.location.hash.substring(1);
+            if (hash) {
+                var targetScheme = document.getElementById('scheme-' + hash);
+                if (targetScheme) {
+                    // Hide all schemes
+                    var allSchemes = document.querySelectorAll('.scheme-content');
+                    for (var i = 0; i < allSchemes.length; i++) {
+                        allSchemes[i].classList.remove('active');
+                    }
+                    
+                    // Show target scheme
+                    targetScheme.classList.add('active');
+                    updateSchemeNavigation(hash);
+                    
+                    // Re-initialize visualizations for the scheme
+                    initializeSchemeVisualizations(targetScheme);
+                }
+            }
+        }
+        
+        // Initialize scheme on page load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initSchemeFromHash);
+        } else {
+            initSchemeFromHash();
+        }
+        
+        // Listen for hash changes (browser back/forward)
+        window.addEventListener('hashchange', handleHashChange);
+        
+        console.log('Scheme switching initialized');
+        
+        // ========== 3D VIEWER FUNCTIONS ==========
+        
+        function create3DViewer(canvas) {
+            console.log('Initializing 3D viewer...');
+            
+            if (typeof THREE === 'undefined') {
+                console.error('Three.js not loaded');
+                canvas.parentElement.innerHTML = '<p style="color: #ef4444; text-align: center; padding: 40px;">Three.js library failed to load. Please refresh the page.</p>';
+                return;
+            }
+            
+            // Scene setup
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0f172a);
+            
+            // Camera setup
+            const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 10000);
+            camera.position.set(500, 500, 500);
+            
+            // Renderer setup
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+            renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            
+            // Controls
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.enableZoom = true;
+            controls.enablePan = true;
+            
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(500, 1000, 500);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+            
+            // Extract area geometry data from the page
+            const areaData = extract3DAreaData();
+            console.log('Extracted 3D area data:', areaData);
+            
+            // Create 3D geometry from area data
+            create3DAreaGeometry(scene, areaData);
+            
+            // Setup interactive controls
+            setup3DViewerControls(controls, scene, camera, renderer, areaData);
+            
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animate();
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                const width = canvas.clientWidth;
+                const height = canvas.clientHeight;
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+                renderer.setSize(width, height);
+            });
+            
+            console.log('3D viewer initialized successfully');
+        }
+        
+        function extract3DAreaData() {
+            console.log('Extracting 3D area data from page...');
+            const areas = [];
+            
+            // Get all tree nodes that represent areas
+            const areaNodes = document.querySelectorAll('.tree-node-content');
+            
+            areaNodes.forEach(node => {
+                try {
+                    const nameElement = node.querySelector('.node-label');
+                    const areaElement = node.querySelector('.node-area');
+                    const levelElement = node.querySelector('.node-level');
+                    
+                    if (nameElement && areaElement) {
+                        const areaName = nameElement.textContent.trim();
+                        const areaText = areaElement.textContent.trim();
+                        const levelText = levelElement ? levelElement.textContent.trim() : 'Unknown';
+                        
+                        // Parse area value
+                        const areaMatch = areaText.match(/([0-9,.]+)\s*SF/);
+                        const areaSF = areaMatch ? parseFloat(areaMatch[1].replace(/,/g, '')) : 0;
+                        
+                        // Get department color from parent
+                        const treeNode = node.closest('.tree-node');
+                        const deptNode = treeNode ? treeNode.closest('.department-node') : null;
+                        const colorElement = deptNode ? deptNode.querySelector('.department-header') : null;
+                        const color = colorElement ? window.getComputedStyle(colorElement).borderColor : '#6b7280';
+                        
+                        if (areaSF > 0) {
+                            areas.push({
+                                name: areaName,
+                                area: areaSF,
+                                level: levelText,
+                                color: color
+                            });
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Error extracting area data:', e);
+                }
+            });
+            
+            console.log('Extracted', areas.length, 'areas with geometry data');
+            return areas;
+        }
+        
+        function create3DAreaGeometry(scene, areaData) {
+            console.log('Creating 3D area geometry...');
+            
+            // Group areas by level
+            const levelGroups = {};
+            areaData.forEach(area => {
+                if (!levelGroups[area.level]) {
+                    levelGroups[area.level] = [];
+                }
+                levelGroups[area.level].push(area);
+            });
+            
+            // Sort levels
+            const levels = Object.keys(levelGroups).sort();
+            let yOffset = 0;
+            
+            levels.forEach((levelName, levelIndex) => {
+                const areas = levelGroups[levelName];
+                const levelHeight = 40;
+                
+                // Create floor plane
+                const floorGeometry = new THREE.PlaneGeometry(1000, 1000);
+                const floorMaterial = new THREE.MeshLambertMaterial({
+                    color: 0x374151,
+                    transparent: true,
+                    opacity: 0.2,
+                    side: THREE.DoubleSide
+                });
+                const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+                floor.rotation.x = -Math.PI / 2;
+                floor.position.y = yOffset;
+                scene.add(floor);
+                
+                // Create areas as extruded shapes
+                let xOffset = 0;
+                let zOffset = 0;
+                const areasPerRow = 10;
+                
+                areas.forEach((area, areaIndex) => {
+                    // Calculate size based on area (square root for proportional dimensions)
+                    const baseSize = Math.sqrt(area.area) * 0.5;
+                    const height = levelHeight;
+                    
+                    // Parse color from RGB string
+                    const colorMatch = area.color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+                    let color = 0x6b7280;
+                    if (colorMatch) {
+                        const r = parseInt(colorMatch[1]);
+                        const g = parseInt(colorMatch[2]);
+                        const b = parseInt(colorMatch[3]);
+                        color = (r << 16) | (g << 8) | b;
+                    }
+                    
+                    // Create box geometry for area
+                    const boxGeometry = new THREE.BoxGeometry(baseSize, height, baseSize);
+                    const boxMaterial = new THREE.MeshLambertMaterial({
+                        color: color,
+                        transparent: true,
+                        opacity: 0.8
+                    });
+                    const box = new THREE.Mesh(boxGeometry, boxMaterial);
+                    
+                    // Position in grid layout
+                    if (areaIndex > 0 && areaIndex % areasPerRow === 0) {
+                        xOffset = 0;
+                        zOffset += 80;
+                    }
+                    
+                    box.position.set(xOffset, yOffset + height/2, zOffset);
+                    xOffset += 80;
+                    
+                    // Store metadata
+                    box.userData = {
+                        name: area.name,
+                        area: area.area,
+                        level: area.level,
+                        type: 'area'
+                    };
+                    
+                    scene.add(box);
+                });
+                
+                yOffset += levelHeight + 20;
+            });
+            
+            console.log('Created geometry for', levels.length, 'levels');
+        }
+        
+        function setup3DViewerControls(controls, scene, camera, renderer, areaData) {
+            console.log('Setting up 3D viewer controls...');
+            
+            // Handle control button clicks
+            const controlButtons = document.querySelectorAll('.viewer3d-controls .control-btn');
+            controlButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const mode = this.dataset.mode;
+                    console.log('Control button clicked:', mode);
+                    
+                    switch(mode) {
+                        case '2d':
+                            // Top-down view
+                            camera.position.set(0, 1000, 0);
+                            camera.lookAt(0, 0, 0);
+                            controlButtons.forEach(b => b.classList.remove('active'));
+                            this.classList.add('active');
+                            break;
+                        case '3d':
+                            // Isometric view
+                            camera.position.set(500, 500, 500);
+                            camera.lookAt(0, 0, 0);
+                            controlButtons.forEach(b => b.classList.remove('active'));
+                            this.classList.add('active');
+                            break;
+                        case 'reset':
+                            // Reset camera
+                            camera.position.set(500, 500, 500);
+                            camera.lookAt(0, 0, 0);
+                            controls.target.set(0, 0, 0);
+                            break;
+                        case 'zoom':
+                            // Zoom to fit all objects
+                            controls.reset();
+                            break;
+                    }
+                });
+            });
+            
+            // Handle object selection
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+            
+            renderer.domElement.addEventListener('dblclick', function(event) {
+                const rect = renderer.domElement.getBoundingClientRect();
+                mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+                
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(scene.children, true);
+                
+                if (intersects.length > 0) {
+                    const object = intersects[0].object;
+                    if (object.userData && object.userData.type === 'area') {
+                        show3DAreaInfo(object.userData);
+                    }
+                }
+            });
+        }
+        
+        function show3DAreaInfo(areaData) {
+            const infoPanel = document.getElementById('viewer3d-info');
+            if (infoPanel) {
+                infoPanel.innerHTML = '<div class="info-panel">' +
+                    '<h4>' + areaData.name + '</h4>' +
+                    '<p><strong>Area:</strong> ' + areaData.area.toLocaleString() + ' SF</p>' +
+                    '<p><strong>Level:</strong> ' + areaData.level + '</p>' +
+                    '</div>';
+            }
+        }
+        
+        """
+    
+    def open_report_in_browser(self, filepath=None):
+        """Open the report in Microsoft Edge browser (preferred) or default browser
     </style>
 </head>
 <body>
@@ -2161,7 +4591,7 @@
         <header class="main-header">
             <h1>🏥 EnneadTab - Excel Area Requirements vs Revit Actual Areas Report</h1>
             <div class="report-info">
-                <p><strong>Generated:</strong> 2025-10-28 15:20:56</p>
+                <p><strong>Generated:</strong> 2025-10-28 15:48:23</p>
                 <p><strong>Project:</strong> NYU HQ - Monitor Area System</p>
             </div>
         </header>
@@ -13779,7 +16209,7 @@
 
         
         <footer class="report-footer">
-            <p>Report generated by Monitor Area System | 2025-10-28 15:20:56</p>
+            <p>Report generated by Monitor Area System | 2025-10-28 15:48:23</p>
             <p style="margin-top: 10px; font-size: 0.9em; color: #9ca3af;">
                 🦆 Powered by <strong style="color: #60a5fa;">EnneadTab</strong> | 
                 For feature requests, contact <strong style="color: #60a5fa;">Sen Zhang</strong>
@@ -13866,7 +16296,8 @@
     </nav>
     
     <script>
-        
+        Get JavaScript for interactive features"""
+        return """
         // Load Chart.js and Three.js from CDN
         const chartScript = document.createElement('script');
         chartScript.src = 'https://cdn.jsdelivr.net/npm/chart.js';
@@ -16288,7 +18719,10 @@
             }
         }
         
-        
+        """
+    
+    def open_report_in_browser(self, filepath=None):
+        """Open the report in Microsoft Edge browser (preferred) or default browser
     </script>
 </body>
 </html>
