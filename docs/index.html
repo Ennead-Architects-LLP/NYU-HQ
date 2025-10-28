@@ -2385,7 +2385,7 @@
             <div class="control-group">
                 <button onclick="resetCamera('DGSF_Scheme_Opt1')">Reset Camera</button>
                 <button onclick="zoomToFit('DGSF_Scheme_Opt1')">Zoom to Fit</button>
-                <button onclick="toggleAnimation('DGSF_Scheme_Opt1')">Animate</button>
+                <button onclick="toggleExplode('DGSF_Scheme_Opt1')">Explode Axon</button>
             </div>
             <div class="control-group" style="font-size: 0.75rem; color: #9ca3af;">
                 <span>🖱️ Right-Click: Orbit | Shift+Right: Pan | Scroll: Zoom | Double-Click: Select Area</span>
@@ -6337,7 +6337,7 @@
             <div class="control-group">
                 <button onclick="resetCamera('DGSF_Scheme_Opt2')">Reset Camera</button>
                 <button onclick="zoomToFit('DGSF_Scheme_Opt2')">Zoom to Fit</button>
-                <button onclick="toggleAnimation('DGSF_Scheme_Opt2')">Animate</button>
+                <button onclick="toggleExplode('DGSF_Scheme_Opt2')">Explode Axon</button>
             </div>
             <div class="control-group" style="font-size: 0.75rem; color: #9ca3af;">
                 <span>🖱️ Right-Click: Orbit | Shift+Right: Pan | Scroll: Zoom | Double-Click: Select Area</span>
@@ -8778,7 +8778,7 @@
             <div class="control-group">
                 <button onclick="resetCamera('DGSF_Scheme_Opt3')">Reset Camera</button>
                 <button onclick="zoomToFit('DGSF_Scheme_Opt3')">Zoom to Fit</button>
-                <button onclick="toggleAnimation('DGSF_Scheme_Opt3')">Animate</button>
+                <button onclick="toggleExplode('DGSF_Scheme_Opt3')">Explode Axon</button>
             </div>
             <div class="control-group" style="font-size: 0.75rem; color: #9ca3af;">
                 <span>🖱️ Right-Click: Orbit | Shift+Right: Pan | Scroll: Zoom | Double-Click: Select Area</span>
@@ -40583,11 +40583,15 @@
                 
                 // Get color from department
                 var color = areaData.color || '#6b7280';
-                var material = new THREE.MeshBasicMaterial({
+                var material = new THREE.MeshStandardMaterial({
                     color: new THREE.Color(color),
                     transparent: true,
                     opacity: 0.7,
-                    side: THREE.DoubleSide
+                    side: THREE.DoubleSide,
+                    emissive: new THREE.Color(0x000000),
+                    emissiveIntensity: 0,
+                    roughness: 0.8,
+                    metalness: 0.2
                 });
                 
                 var mesh = new THREE.Mesh(geometry, material);
@@ -41363,20 +41367,119 @@
         }
         
         /**
-         * Toggle animation (explode view / fly-through)
+         * Toggle explode view - pull shapes apart on Z-axis
          */
-        function toggleAnimation(schemeName) {
+        function toggleExplode(schemeName) {
             var viewer = geometryViewers[schemeName];
             if (!viewer) return;
             
-            viewer.isAnimating = !viewer.isAnimating;
+            viewer.isExploded = !viewer.isExploded;
             
-            if (viewer.isAnimating) {
-                console.log('Starting animation');
-                // TODO: Implement explode view animation
+            if (viewer.isExploded) {
+                console.log('Exploding axonometric view');
+                explodeView(viewer);
             } else {
-                console.log('Stopping animation');
+                console.log('Collapsing to normal view');
+                collapseView(viewer);
             }
+        }
+        
+        /**
+         * Explode view - spread meshes apart on Z-axis
+         */
+        function explodeView(viewer) {
+            if (!viewer.areaMeshes || viewer.areaMeshes.length === 0) return;
+            
+            // Store original positions if not already stored
+            if (!viewer.originalPositions) {
+                viewer.originalPositions = [];
+                viewer.areaMeshes.forEach(function(mesh) {
+                    viewer.originalPositions.push({
+                        y: mesh.position.y
+                    });
+                });
+            }
+            
+            // Calculate explode spacing based on number of levels
+            var levels = {};
+            viewer.areaMeshes.forEach(function(mesh) {
+                var levelName = mesh.userData.level_name || 'Unknown';
+                if (!levels[levelName]) {
+                    levels[levelName] = [];
+                }
+                levels[levelName].push(mesh);
+            });
+            
+            var levelNames = Object.keys(levels).sort();
+            var explodeSpacing = 50; // Units to separate each level
+            
+            // Animate meshes to exploded positions
+            var animationDuration = 800; // milliseconds
+            var startTime = Date.now();
+            
+            function animateExplode() {
+                var elapsed = Date.now() - startTime;
+                var progress = Math.min(elapsed / animationDuration, 1);
+                
+                // Use easeInOutCubic for smooth animation
+                var eased = progress < 0.5 
+                    ? 4 * progress * progress * progress 
+                    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+                
+                levelNames.forEach(function(levelName, index) {
+                    var targetOffset = index * explodeSpacing;
+                    levels[levelName].forEach(function(mesh, meshIndex) {
+                        var originalY = viewer.originalPositions[viewer.areaMeshes.indexOf(mesh)].y;
+                        mesh.position.y = originalY + (targetOffset * eased);
+                    });
+                });
+                
+                viewer.renderer.render(viewer.scene, viewer.camera);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animateExplode);
+                }
+            }
+            
+            animateExplode();
+        }
+        
+        /**
+         * Collapse view - return meshes to original positions
+         */
+        function collapseView(viewer) {
+            if (!viewer.areaMeshes || viewer.areaMeshes.length === 0) return;
+            if (!viewer.originalPositions) return;
+            
+            // Animate meshes back to original positions
+            var animationDuration = 800; // milliseconds
+            var startTime = Date.now();
+            
+            function animateCollapse() {
+                var elapsed = Date.now() - startTime;
+                var progress = Math.min(elapsed / animationDuration, 1);
+                
+                // Use easeInOutCubic for smooth animation
+                var eased = progress < 0.5 
+                    ? 4 * progress * progress * progress 
+                    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+                
+                viewer.areaMeshes.forEach(function(mesh, index) {
+                    if (viewer.originalPositions[index]) {
+                        var originalY = viewer.originalPositions[index].y;
+                        var currentY = mesh.position.y;
+                        mesh.position.y = currentY + (originalY - currentY) * eased;
+                    }
+                });
+                
+                viewer.renderer.render(viewer.scene, viewer.camera);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animateCollapse);
+                }
+            }
+            
+            animateCollapse();
         }
         
         // Auto-initialize geometry viewers when Three.js is available
