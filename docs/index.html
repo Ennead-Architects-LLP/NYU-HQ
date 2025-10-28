@@ -2148,6 +2148,224 @@ body {
     color: #fbbf24;
 }
 
+/* ===== 2D/3D VIEWER STYLES ===== */
+.viewer-container {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0;
+    height: 600px;
+}
+
+.viewer-panel {
+    flex: 1;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    background: #f9fafb;
+}
+
+.viewer-panel h3 {
+    margin: 0;
+    padding: 12px 16px;
+    background: #f3f4f6;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.viewer-canvas {
+    width: 100%;
+    height: calc(100% - 48px);
+    cursor: grab;
+}
+
+.viewer-canvas:active {
+    cursor: grabbing;
+}
+
+.viewer-controls {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.control-btn {
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    background: white;
+    color: #374151;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.control-btn:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+.control-btn.active {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+.control-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.control-select {
+    padding: 6px 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    background: white;
+    color: #374151;
+    font-size: 0.875rem;
+    min-width: 120px;
+}
+
+.control-slider {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 150px;
+}
+
+.control-slider input[type="range"] {
+    flex: 1;
+}
+
+.control-slider label {
+    font-size: 0.875rem;
+    color: #6b7280;
+    min-width: 40px;
+}
+
+.viewer-info {
+    position: absolute;
+    top: 48px;
+    right: 16px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 12px;
+    max-width: 300px;
+    font-size: 0.875rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.viewer-info h4 {
+    margin: 0 0 8px 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.viewer-info p {
+    margin: 4px 0;
+    color: #6b7280;
+}
+
+.viewer-info .info-highlight {
+    color: #374151;
+    font-weight: 500;
+}
+
+.viewer-legend {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 12px;
+    max-width: 250px;
+    font-size: 0.875rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.viewer-legend h4 {
+    margin: 0 0 8px 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    border: 1px solid #d1d5db;
+}
+
+.legend-label {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+/* Shape selection styles */
+.shape-selected {
+    stroke: #ef4444 !important;
+    stroke-width: 3px !important;
+}
+
+.shape-highlighted {
+    stroke: #f59e0b !important;
+    stroke-width: 2px !important;
+}
+
+.shape-wireframe {
+    fill: none !important;
+    stroke: #9ca3af !important;
+    stroke-width: 1px !important;
+    stroke-dasharray: 2,2 !important;
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+    .viewer-container {
+        flex-direction: column;
+        height: auto;
+    }
+    
+    .viewer-panel {
+        height: 400px;
+    }
+}
+
+@media (max-width: 768px) {
+    .viewer-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .control-btn, .control-select {
+        width: 100%;
+        margin: 2px 0;
+    }
+    
+    .control-slider {
+        width: 100%;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -2160,7 +2378,7 @@ body {
         <header class="main-header">
             <h1>🏥 EnneadTab - Excel Area Requirements vs Revit Actual Areas Report</h1>
             <div class="report-info">
-                <p><strong>Generated:</strong> 2025-10-28 15:50:46</p>
+                <p><strong>Generated:</strong> 2025-10-28 16:26:10</p>
                 <p><strong>Project:</strong> NYU HQ - Monitor Area System</p>
             </div>
         </header>
@@ -2171,7 +2389,8 @@ body {
         <div class="area-scheme-badge">
             <span class="badge-label">Area Scheme</span>
             <span class="badge-value">DGSF Scheme_Opt3</span>
-        </div>
+        <script id="areaGeometry-DGSF_Scheme_Opt3" type="application/json">[]</script>
+</div>
         <div class="online-dashboard-note">
             <div class="dashboard-link-container">
                 <div class="dashboard-link-item">
@@ -2226,41 +2445,61 @@ body {
         </div>
     </header>
     
-    <div class="viewer3d-section">
-        <h2>🏗️ 3D Area Geometry Viewer</h2>
-        <div class="viewer3d-controls">
+    
+    <div class="viewer-section" id="viewer-section-DGSF_Scheme_Opt3">
+        <h2>🏗️ Area Geometry Viewers</h2>
+        <div class="viewer-controls">
             <button class="control-btn active" data-mode="2d">2D Floor Plan</button>
             <button class="control-btn" data-mode="3d">3D Extrusion</button>
-            <select id="level-selector" class="control-select">
+            <select class="control-select" id="level-selector-DGSF_Scheme_Opt3">
                 <option value="all">Level: All Levels</option>
             </select>
-            <select id="department-selector" class="control-select">
+            <select class="control-select" id="department-selector-DGSF_Scheme_Opt3">
                 <option value="all">Department: All Departments</option>
             </select>
-            <button class="control-btn" data-mode="target-overlay">Show Target Overlay</button>
-            <button class="control-btn" data-mode="reset">Reset Camera</button>
-            <button class="control-btn" data-mode="zoom">Zoom to Fit</button>
-            <button class="control-btn" data-mode="animate">Animate</button>
+            <button class="control-btn" data-action="zoom-fit">Zoom to Fit</button>
+            <button class="control-btn" data-action="reset-camera">Reset Camera</button>
+            <div class="control-slider">
+                <label>Explode:</label>
+                <input type="range" id="explode-slider-DGSF_Scheme_Opt3" min="0" max="100" value="0">
+                <span id="explode-value-DGSF_Scheme_Opt3">0%</span>
+            </div>
         </div>
-        <div class="viewer3d-instructions">
-            <span>Right-Click: Orbit | Shift+Right: Pan | Scroll: Zoom | Double-Click: Select Area</span>
-        </div>
-        <div class="viewer3d-container">
-            <canvas id="viewer3d-canvas"></canvas>
-            <div class="viewer3d-info" id="viewer3d-info">
-                <div class="info-panel">
-                    <h4>3D Area Geometry</h4>
+        <div class="viewer-container">
+            <div class="viewer-panel">
+                <h3>2D Floor Plan</h3>
+                <canvas id="viewer2d-canvas-DGSF_Scheme_Opt3" class="viewer-canvas"></canvas>
+                <div class="viewer-info" id="viewer2d-info-DGSF_Scheme_Opt3">
+                    <h4>2D Viewer</h4>
                     <p>Loading area data...</p>
+                </div>
+                <div class="viewer-legend" id="viewer2d-legend-DGSF_Scheme_Opt3">
+                    <h4>Legend</h4>
+                    <div class="legend-items">
+                        <!-- Dynamic legend will be generated here -->
+                    </div>
+                </div>
+            </div>
+            <div class="viewer-panel">
+                <h3>3D Extrusion</h3>
+                <canvas id="viewer3d-canvas-DGSF_Scheme_Opt3" class="viewer-canvas"></canvas>
+                <div class="viewer-info" id="viewer3d-info-DGSF_Scheme_Opt3">
+                    <h4>3D Viewer</h4>
+                    <p>Loading area data...</p>
+                </div>
+                <div class="viewer-legend" id="viewer3d-legend-DGSF_Scheme_Opt3">
+                    <h4>Legend</h4>
+                    <div class="legend-items">
+                        <!-- Dynamic legend will be generated here -->
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="viewer3d-legend">
-            <div class="legend-title">View Legend</div>
-            <div class="legend-items" id="viewer3d-legend">
-                <!-- Dynamic legend will be generated here -->
-            </div>
+        <div class="viewer-instructions">
+            <p><strong>Controls:</strong> Right-Click: Orbit | Shift+Right: Pan | Scroll: Zoom | Double-Click: Select Area</p>
         </div>
     </div>
+
     
     <div class="department-summary-section">
         <h2>📊 Department Fulfillment Summary</h2>
@@ -7321,7 +7560,8 @@ body {
         <div class="area-scheme-badge">
             <span class="badge-label">Area Scheme</span>
             <span class="badge-value">DGSF Scheme_Opt1</span>
-        </div>
+        <script id="areaGeometry-DGSF_Scheme_Opt1" type="application/json">[{"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Hospitality Offices, Lockers and Break Rooms", "area_status": "Not Placed", "creator": "amielkeKREU3", "level_name": "Level 2", "department": "BUILDING SUPPORT", "area_sf": 0.0, "division": "Building & Staff Support"}, "color": "#c1b493", "id": "area_1228357", "geometry": []}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Hospitality Offices, Lockers and Break Rooms", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 2", "department": "BUILDING SUPPORT", "area_sf": 2178.6605161767930, "division": "Building & Staff Support"}, "color": "#c1b493", "id": "area_1351356", "geometry": [[{"z": 15.0, "y": 783.91005086393716, "x": 812.66619467140140}, {"z": 15.0, "y": 833.56220683510242, "x": 783.99932864623361}, {"z": 15.0, "y": 814.56224264227126, "x": 751.09063242807122}, {"z": 15.0, "y": 764.91002787887805, "x": 779.75739662275396}]]}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Hospitality Offices, Lockers and Break Rooms", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 2", "department": "BUILDING SUPPORT", "area_sf": 3820.0784307374161, "division": "Building & Staff Support"}, "color": "#c1b493", "id": "area_1351566", "geometry": [[{"z": 15.0, "y": 580.43821318009543, "x": 505.06679489570990}, {"z": 15.0, "y": 620.79115435668257, "x": 505.06679489570996}, {"z": 15.0, "y": 620.79115435668291, "x": 410.40012824505664}, {"z": 15.0, "y": 580.43821318009566, "x": 410.40012824505664}]]}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Hospitality Offices, Lockers and Break Rooms", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 2", "department": "BUILDING SUPPORT", "area_sf": 2581.3519135758906, "division": "Building & Staff Support"}, "color": "#c1b493", "id": "area_1405281", "geometry": [[{"z": 15.0, "y": 755.16974101465848, "x": 672.22033613865369}, {"z": 15.0, "y": 723.16965378289956, "x": 616.79455920660848}, {"z": 15.0, "y": 688.23975565410581, "x": 636.96147241829647}, {"z": 15.0, "y": 720.23993912736819, "x": 692.38706666223834}]]}, {"metadata": {"level_elevation": 0.0, "last_editor": "szhangGOODLOOKING", "room_name": "Soiled Dock", "area_status": "Good", "creator": "amielkeKREU3", "level_name": "Level 1", "department": "BUILDING SUPPORT", "area_sf": 5250.7297765408330, "division": "Materials Managament"}, "color": "#ad9c71", "id": "area_1297908", "geometry": [[{"z": 0.0, "y": 664.93821318009543, "x": 440.83673276911793}, {"z": 0.0, "y": 664.93821318009520, "x": 491.93584231715084}, {"z": 0.0, "y": 681.20987731596688, "x": 520.11901395772747}, {"z": 0.0, "y": 761.44666905012252, "x": 473.76013691106465}, {"z": 0.0, "y": 742.43821318009464, "x": 440.83673276911804}]]}, {"metadata": {"level_elevation": 30.0, "last_editor": "szhangGOODLOOKING", "room_name": "Conference", "area_status": "Not Placed", "creator": "amielkeKREU3", "level_name": "Level 3", "department": "ADMINISTRATION & STAFF SUPPORT", "area_sf": 0.0, "division": "Hospital Operations and Staff Support"}, "color": "#e0a40e", "id": "area_1238685", "geometry": []}, {"metadata": {"level_elevation": 30.0, "last_editor": "szhangGOODLOOKING", "room_name": "Conference", "area_status": "Not Placed", "creator": "amielkeKREU3", "level_name": "Level 3", "department": "ADMINISTRATION & STAFF SUPPORT", "area_sf": 0.0, "division": "Hospital Operations and Staff Support"}, "color": "#e0a40e", "id": "area_1318792", "geometry": []}, {"metadata": {"level_elevation": 30.0, "last_editor": "szhangGOODLOOKING", "room_name": "Conference", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 3", "department": "ADMINISTRATION & STAFF SUPPORT", "area_sf": 1478.9999999999654, "division": "Hospital Operations and Staff Support"}, "color": "#e0a40e", "id": "area_1346219", "geometry": [[{"z": 30.0, "y": 623.43821318009498, "x": 840.40012824052133}, {"z": 30.0, "y": 633.43821318009498, "x": 840.40012824052144}, {"z": 30.0, "y": 633.43821318009509, "x": 811.40012824052269}, {"z": 30.0, "y": 582.43821318009509, "x": 811.40012824052258}, {"z": 30.0, "y": 582.43821318009498, "x": 840.40012824052121}]]}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Conference", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 2", "department": "ADMINISTRATION & STAFF SUPPORT", "area_sf": 1155.0020399482273, "division": "Hospital Operations and Staff Support"}, "color": "#e0a40e", "id": "area_1402584", "geometry": [[{"z": 15.0, "y": 689.44840831932606, "x": 769.05429244585571}, {"z": 15.0, "y": 696.94844377724587, "x": 782.04465303091843}, {"z": 15.0, "y": 706.94844389531727, "x": 799.36516131111250}, {"z": 15.0, "y": 735.52732949866390, "x": 782.86513401739739}, {"z": 15.0, "y": 718.02720160646368, "x": 752.55421443843227}]]}, {"metadata": {"level_elevation": 30.0, "last_editor": "szhangGOODLOOKING", "room_name": "Conference", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 3", "department": "ADMINISTRATION & STAFF SUPPORT", "area_sf": 2660.1047972844799, "division": "Hospital Operations and Staff Support"}, "color": "#e0a40e", "id": "area_1402674", "geometry": [[{"z": 30.0, "y": 642.41983174670793, "x": 597.59775016694346}, {"z": 30.0, "y": 625.09866180840481, "x": 607.59819533236146}, {"z": 30.0, "y": 691.59896278382996, "x": 722.77934852267163}, {"z": 30.0, "y": 708.92015103101483, "x": 712.77895582547501}, {"z": 30.0, "y": 667.41995483035259, "x": 640.89896058782938}]]}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Conference", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 2", "department": "ADMINISTRATION & STAFF SUPPORT", "area_sf": 3116.6666674673324, "division": "Hospital Operations and Staff Support"}, "color": "#e0a40e", "id": "area_1404560", "geometry": [[{"z": 15.0, "y": 580.43821318009532, "x": 517.06679489570990}, {"z": 15.0, "y": 580.43821318009520, "x": 579.40012824505664}, {"z": 15.0, "y": 630.43821318009520, "x": 579.40012824505664}, {"z": 15.0, "y": 630.43821318009532, "x": 517.06679489571002}]]}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Conference", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 2", "department": "ADMINISTRATION & STAFF SUPPORT", "area_sf": 1280.0007415338023, "division": "Hospital Operations and Staff Support"}, "color": "#e0a40e", "id": "area_1404655", "geometry": [[{"z": 15.0, "y": 688.23975565410581, "x": 636.96147241829635}, {"z": 15.0, "y": 670.91927487402256, "x": 646.96151969552307}, {"z": 15.0, "y": 702.91943105187624, "x": 702.38706666272833}, {"z": 15.0, "y": 720.23993912736819, "x": 692.38706666223834}]]}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Conference", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 2", "department": "ADMINISTRATION & STAFF SUPPORT", "area_sf": 1139.9969212191745, "division": "Hospital Operations and Staff Support"}, "color": "#e0a40e", "id": "area_1405209", "geometry": [[{"z": 15.0, "y": 757.92932962691714, "x": 827.66626547137628}, {"z": 15.0, "y": 783.91005086393716, "x": 812.66619467140140}, {"z": 15.0, "y": 764.91002787887805, "x": 779.75739662275396}, {"z": 15.0, "y": 738.92927587855172, "x": 794.75741413945468}]]}, {"metadata": {"level_elevation": 0.0, "last_editor": "szhangGOODLOOKING", "room_name": "Meditation", "area_status": "Not Placed", "creator": "cfleetwoodACGCC", "level_name": "Level 1", "department": "PUBLIC SUPPORT", "area_sf": 0.0, "division": "Public Resources"}, "color": "#f8df24", "id": "area_1077047", "geometry": []}, {"metadata": {"level_elevation": -22.0, "last_editor": "szhangGOODLOOKING", "room_name": "Engineering & Shops", "area_status": "Good", "creator": "Vivian.ZhanS5ZQG", "level_name": "Level B1", "department": "BUILDING SUPPORT", "area_sf": 15044.072158919877, "division": "Building & Staff Support"}, "color": "#c1b493", "id": "area_1340708", "geometry": [[{"z": -22.0, "y": 664.93821318009543, "x": 444.40012822634526}, {"z": -22.0, "y": 664.93821318009520, "x": 491.93584231715084}, {"z": -22.0, "y": 735.56190425926104, "x": 614.25889366303386}, {"z": -22.0, "y": 815.81335447319441, "x": 567.92540568832806}, {"z": -22.0, "y": 744.49555345402587, "x": 444.40012822634537}]]}, {"metadata": {"level_elevation": 0.0, "last_editor": "szhangGOODLOOKING", "room_name": "Supply Chain (Supply Sto & Dist, Staff/Admin, Mail Room)", "area_status": "Not Placed", "creator": "amielkeKREU3", "level_name": "Level 1", "department": "BUILDING SUPPORT", "area_sf": 0.0, "division": "Materials Managament"}, "color": "#c1b493", "id": "area_1297911", "geometry": []}, {"metadata": {"level_elevation": 0.0, "last_editor": "szhangGOODLOOKING", "room_name": "Supply Chain (Supply Sto & Dist, Staff/Admin, Mail Room)", "area_status": "Good", "creator": "amielkeKREU3", "level_name": "Level 1", "department": "BUILDING SUPPORT", "area_sf": 12968.836850866162, "division": "Materials Managament"}, "color": "#c1b493", "id": "area_1297933", "geometry": [[{"z": 0.0, "y": 664.93821318009600, "x": 291.40012824505658}, {"z": 0.0, "y": 664.93821318009543, "x": 440.83673276911793}, {"z": 0.0, "y": 742.43821318009464, "x": 440.83673276911804}, {"z": 0.0, "y": 742.43821318009520, "x": 266.40012824052405}, {"z": 0.0, "y": 686.93821318009611, "x": 266.40012824052394}, {"z": 0.0, "y": 686.93821318009600, "x": 291.40012824505664}]]}, {"metadata": {"level_elevation": -22.0, "last_editor": "szhangGOODLOOKING", "room_name": "Supply Chain (Supply Sto & Dist, Staff/Admin, Mail Room)", "area_status": "Not Placed", "creator": "Vivian.ZhanS5ZQG", "level_name": "Level B1", "department": "BUILDING SUPPORT", "area_sf": 0.0, "division": "Materials Managament"}, "color": "#c1b493", "id": "area_1340699", "geometry": []}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Pathology Office and Laboratory Admin", "area_status": "Good", "creator": "amielkeKREU3", "level_name": "Level 2", "department": "CLINICAL SUPPORT", "area_sf": 17009.999999999982, "division": "Laboratory Services"}, "color": "#fae1d2", "id": "area_1228136", "geometry": [[{"z": 15.0, "y": 407.43821318009509, "x": 537.40012824505629}, {"z": 15.0, "y": 407.43821318009543, "x": 411.40012824505641}, {"z": 15.0, "y": 272.43821318009560, "x": 411.40012824505624}, {"z": 15.0, "y": 272.43821318009515, "x": 537.40012824505607}]]}, {"metadata": {"level_elevation": 30.0, "last_editor": "szhangGOODLOOKING", "room_name": "Surgical, Interventional, and Perioperative Services", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 3", "department": "ADMINISTRATION & STAFF SUPPORT", "area_sf": 1926.7570842178084, "division": "Departmental Offices"}, "color": "#e0a40e", "id": "area_1346201", "geometry": [[{"z": 30.0, "y": 633.43821318009498, "x": 840.40012824052133}, {"z": 30.0, "y": 635.87379628667384, "x": 840.40012824052144}, {"z": 30.0, "y": 719.93887155836956, "x": 791.86513440296062}, {"z": 30.0, "y": 709.93890277633886, "x": 774.54478940130321}, {"z": 30.0, "y": 646.10358337664570, "x": 811.40012824052269}, {"z": 30.0, "y": 633.43821318009509, "x": 811.40012824052269}]]}, {"metadata": {"level_elevation": 30.0, "last_editor": "szhangGOODLOOKING", "room_name": "Minor Procedure Room (EP)", "area_status": "Good", "creator": "yhuangZZUZV", "level_name": "Level 3", "department": "DIAGNOSTIC AND TREATMENT", "area_sf": 98048.333331989998, "division": "Procedure"}, "color": "#93a63f", "id": "area_1264642", "geometry": [[{"z": 30.0, "y": 598.43821318009532, "x": 505.06679489570996}, {"z": 30.0, "y": 598.43821318009611, "x": 256.40012824052377}, {"z": 30.0, "y": 262.43821318009600, "x": 256.40012824052314}, {"z": 30.0, "y": 262.43821318009498, "x": 597.40012824505607}, {"z": 30.0, "y": 419.43821318009492, "x": 597.40012824505629}, {"z": 30.0, "y": 419.43821318009498, "x": 579.40012824505629}, {"z": 30.0, "y": 419.43821318009520, "x": 517.06679489570956}, {"z": 30.0, "y": 419.43821318009526, "x": 505.06679489570962}]]}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Blood Bank", "area_status": "Good", "creator": "amielkeKREU3", "level_name": "Level 2", "department": "CLINICAL SUPPORT", "area_sf": 6210.0000004079575, "division": "Laboratory Services"}, "color": "#fae1d2", "id": "area_1228144", "geometry": [[{"z": 15.0, "y": 442.43821318009589, "x": 335.40012824505646}, {"z": 15.0, "y": 532.43821318009577, "x": 335.40012824505664}, {"z": 15.0, "y": 532.43821318009600, "x": 266.40012824052366}, {"z": 15.0, "y": 442.43821318009606, "x": 266.40012824052349}]]}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Central Sterile", "area_status": "Good", "creator": "amielkeKREU3", "level_name": "Level 2", "department": "CLINICAL SUPPORT", "area_sf": 23492.333330947360, "division": "CSPD & Pharmacy"}, "color": "#fae1d2", "id": "area_1228134", "geometry": [[{"z": 15.0, "y": 568.43821318009577, "x": 347.40012824505669}, {"z": 15.0, "y": 419.43821318009566, "x": 347.40012824505641}, {"z": 15.0, "y": 419.43821318009520, "x": 505.06679489570962}, {"z": 15.0, "y": 568.43821318009543, "x": 505.06679489570990}]]}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Residents and Fellows", "area_status": "Good", "creator": "amielkeKREU3", "level_name": "Level 2", "department": "ADMINISTRATION & STAFF SUPPORT", "area_sf": 1916.7634305827378, "division": "Departmental Offices"}, "color": "#e0a40e", "id": "area_1312694", "geometry": [[{"z": 15.0, "y": 623.43821318009498, "x": 840.40012824052133}, {"z": 15.0, "y": 635.87379628667384, "x": 840.40012824052144}, {"z": 15.0, "y": 706.94844389531727, "x": 799.36516131111239}, {"z": 15.0, "y": 696.94844377724587, "x": 782.04465303091843}, {"z": 15.0, "y": 646.10358921814293, "x": 811.40012824052269}, {"z": 15.0, "y": 623.43821318009509, "x": 811.40012824052269}]]}, {"metadata": {"level_elevation": -22.0, "last_editor": "szhangGOODLOOKING", "room_name": "MCIT  Storage and Support", "area_status": "Good", "creator": "Vivian.ZhanS5ZQG", "level_name": "Level B1", "department": "BUILDING SUPPORT", "area_sf": 3695.9917857626060, "division": "Building & Staff Support"}, "color": "#c1b493", "id": "area_1340723", "geometry": [[{"z": -22.0, "y": 771.56207417966800, "x": 676.61262463269077}, {"z": -22.0, "y": 827.56217843936417, "x": 773.60704002022658}, {"z": -22.0, "y": 856.14087102104122, "x": 757.10702032542918}, {"z": -22.0, "y": 800.14108285659074, "x": 660.11254201150223}]]}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Biomed ( Clinical Engineering)", "area_status": "Good", "creator": "amielkeKREU3", "level_name": "Level 2", "department": "CLINICAL SUPPORT", "area_sf": 5267.9215677252905, "division": "CSPD & Pharmacy"}, "color": "#fae1d2", "id": "area_1228148", "geometry": [[{"z": 15.0, "y": 672.51941989689885, "x": 505.06679489571002}, {"z": 15.0, "y": 676.43821318009509, "x": 505.06679489571002}, {"z": 15.0, "y": 676.43821318009543, "x": 410.40012824505675}, {"z": 15.0, "y": 620.79115435668291, "x": 410.40012824505664}, {"z": 15.0, "y": 620.79115435668257, "x": 505.06679489570996}]]}, {"metadata": {"level_elevation": 0.0, "last_editor": "szhangGOODLOOKING", "room_name": "Radiation Oncology", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 1", "department": "DIAGNOSTIC AND TREATMENT", "area_sf": 13283.999999442476, "division": "Radiation Oncology"}, "color": "#93a63f", "id": "area_1077690", "geometry": [[{"z": 0.0, "y": 284.43821318009543, "x": 469.40012824505584}, {"z": 0.0, "y": 284.43821318009509, "x": 577.40012824052326}, {"z": 0.0, "y": 407.43821318009498, "x": 577.40012824052349}, {"z": 0.0, "y": 407.43821318009526, "x": 505.06679490745296}, {"z": 0.0, "y": 407.43821318009537, "x": 469.40012824505607}]]}, {"metadata": {"level_elevation": 0.0, "last_editor": "szhangGOODLOOKING", "room_name": "Gift Shop", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 1", "department": "PUBLIC SUPPORT", "area_sf": 719.99999990934521, "division": "Cafe & Retail"}, "color": "#f8df24", "id": "area_1372567", "geometry": [[{"z": 0.0, "y": 553.43821318010453, "x": 615.40012824052360}, {"z": 0.0, "y": 553.43821318010464, "x": 579.40012824505629}, {"z": 0.0, "y": 533.43821318010464, "x": 579.40012824505629}, {"z": 0.0, "y": 533.43821318010453, "x": 615.40012824052360}]]}, {"metadata": {"level_elevation": 30.0, "last_editor": "szhangGOODLOOKING", "room_name": "Visitor Services Offices", "area_status": "Not Placed", "creator": "amielkeKREU3", "level_name": "Level 3", "department": "ADMINISTRATION & STAFF SUPPORT", "area_sf": 0.0, "division": "Hospital Operations and Staff Support"}, "color": "#e0a40e", "id": "area_1241057", "geometry": []}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Respiratory Therapy", "area_status": "Good", "creator": "amielkeKREU3", "level_name": "Level 2", "department": "CLINICAL SUPPORT", "area_sf": 3312.0000002176166, "division": "CSPD & Pharmacy"}, "color": "#fae1d2", "id": "area_1228142", "geometry": [[{"z": 15.0, "y": 532.43821318009577, "x": 335.40012824505664}, {"z": 15.0, "y": 580.43821318009577, "x": 335.40012824505675}, {"z": 15.0, "y": 580.43821318009600, "x": 266.40012824052371}, {"z": 15.0, "y": 532.43821318009600, "x": 266.40012824052366}]]}, {"metadata": {"level_elevation": 0.0, "last_editor": "szhangGOODLOOKING", "room_name": "Staff Entry", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 1", "department": "PUBLIC SUPPORT", "area_sf": 1458.5870932484613, "division": "Lobby"}, "color": "#fcf19c", "id": "area_1344536", "geometry": [[{"z": 0.0, "y": 694.82457504309366, "x": 806.36488025656365}, {"z": 0.0, "y": 719.97320761873380, "x": 849.92331549015171}, {"z": 0.0, "y": 745.08746462065255, "x": 835.42350119782316}, {"z": 0.0, "y": 725.93889987838872, "x": 802.25742289780499}, {"z": 0.0, "y": 719.93887155837581, "x": 791.86513440295710}]]}, {"metadata": {"level_elevation": 30.0, "last_editor": "szhangGOODLOOKING", "room_name": "Staff Entry", "area_status": "Not Placed", "creator": "cfleetwoodACGCC", "level_name": "Level 3", "department": "PUBLIC SUPPORT", "area_sf": 0.0, "division": "Lobby"}, "color": "#fcf19c", "id": "area_1401911", "geometry": []}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Staff Entry", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 2", "department": "PUBLIC SUPPORT", "area_sf": 1101.9803553631355, "division": "Lobby"}, "color": "#fcf19c", "id": "area_1404502", "geometry": [[{"z": 15.0, "y": 744.93896900840741, "x": 835.16630087136411}, {"z": 15.0, "y": 725.93889987838861, "x": 802.25742289780510}, {"z": 15.0, "y": 700.82461313912847, "x": 816.75718568387128}, {"z": 15.0, "y": 719.82471200648865, "x": 849.66611516369289}]]}, {"metadata": {"level_elevation": 30.0, "last_editor": "szhangGOODLOOKING", "room_name": "Staff Entry", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 3", "department": "PUBLIC SUPPORT", "area_sf": 1101.9803553631455, "division": "Lobby"}, "color": "#fcf19c", "id": "area_1404510", "geometry": [[{"z": 30.0, "y": 719.82471200648865, "x": 849.66611516369289}, {"z": 30.0, "y": 744.93896900840741, "x": 835.16630087136411}, {"z": 30.0, "y": 725.93889987838861, "x": 802.25742289780510}, {"z": 30.0, "y": 700.82461313912836, "x": 816.75718568387128}]]}, {"metadata": {"level_elevation": -22.0, "last_editor": "szhangGOODLOOKING", "room_name": "EVS", "area_status": "Good", "creator": "Vivian.ZhanS5ZQG", "level_name": "Level B1", "department": "BUILDING SUPPORT", "area_sf": 6105.0000006498885, "division": "Materials Managament"}, "color": "#c1b493", "id": "area_1340696", "geometry": [[{"z": -22.0, "y": 585.18135380626018, "x": 505.06679490745341}, {"z": -22.0, "y": 630.18135380626018, "x": 505.06679490745353}, {"z": -22.0, "y": 630.18135380626074, "x": 369.40012822634526}, {"z": -22.0, "y": 585.18135380626074, "x": 369.40012822634515}]]}, {"metadata": {"level_elevation": 0.0, "last_editor": "szhangGOODLOOKING", "room_name": "Main Lobby", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 1", "department": "PUBLIC SUPPORT", "area_sf": 18904.000000000684, "division": "Lobby"}, "color": "#fcf19c", "id": "area_1076904", "geometry": [[{"z": 0.0, "y": 473.43821318010441, "x": 641.40012824052349}, {"z": 0.0, "y": 473.43821318010453, "x": 615.40012824052349}, {"z": 0.0, "y": 473.43821318010470, "x": 577.40012824052360}, {"z": 0.0, "y": 407.43821318009498, "x": 577.40012824052349}, {"z": 0.0, "y": 407.43821318009492, "x": 597.40012824505629}, {"z": 0.0, "y": 407.43821318009401, "x": 881.40012824052303}, {"z": 0.0, "y": 471.43821318009446, "x": 881.40012824052314}, {"z": 0.0, "y": 471.43821318009469, "x": 811.40012824052246}, {"z": 0.0, "y": 467.43821318009469, "x": 811.40012824052246}, {"z": 0.0, "y": 467.43821318009520, "x": 641.40012824052349}]]}, {"metadata": {"level_elevation": 30.0, "last_editor": "szhangGOODLOOKING", "room_name": "Hospital Operations", "area_status": "Good", "creator": "amielkeKREU3", "level_name": "Level 3", "department": "ADMINISTRATION & STAFF SUPPORT", "area_sf": 5068.8818589423463, "division": "Hospital Operations and Staff Support"}, "color": "#e0a40e", "id": "area_1240895", "geometry": [[{"z": 30.0, "y": 639.08932182395665, "x": 852.40012824052133}, {"z": 30.0, "y": 623.43821318009498, "x": 852.40012824052133}, {"z": 30.0, "y": 623.43821318009498, "x": 840.40012824052133}, {"z": 30.0, "y": 582.43821318009498, "x": 840.40012824052121}, {"z": 30.0, "y": 582.43821318009486, "x": 881.40012824052349}, {"z": 30.0, "y": 664.86013494046176, "x": 881.40012824052360}, {"z": 30.0, "y": 665.66398436941859, "x": 880.93602263556875}, {"z": 30.0, "y": 719.82471200648865, "x": 849.66611516369289}, {"z": 30.0, "y": 700.82461313912836, "x": 816.75718568387128}]]}, {"metadata": {"level_elevation": 30.0, "last_editor": "szhangGOODLOOKING", "room_name": "Hospital Operations", "area_status": "Not Placed", "creator": "amielkeKREU3", "level_name": "Level 3", "department": "ADMINISTRATION & STAFF SUPPORT", "area_sf": 0.0, "division": "Hospital Operations and Staff Support"}, "color": "#e0a40e", "id": "area_1318789", "geometry": []}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Public Education", "area_status": "Not Placed", "creator": "amielkeKREU3", "level_name": "Level 2", "department": "PUBLIC SUPPORT", "area_sf": 0.0, "division": "Public Resources"}, "color": "#f8df24", "id": "area_1228692", "geometry": []}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Public Education", "area_status": "Not Placed", "creator": "amielkeKREU3", "level_name": "Level 2", "department": "PUBLIC SUPPORT", "area_sf": 0.0, "division": "Public Resources"}, "color": "#f8df24", "id": "area_1312687", "geometry": []}, {"metadata": {"level_elevation": 0.0, "last_editor": "szhangGOODLOOKING", "room_name": "Public Education", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 1", "department": "PUBLIC SUPPORT", "area_sf": 3025.0000000003802, "division": "Public Resources"}, "color": "#f8df24", "id": "area_1344537", "geometry": [[{"z": 0.0, "y": 699.96503159476708, "x": 735.26975171992240}, {"z": 0.0, "y": 716.41981717323802, "x": 725.76952835854934}, {"z": 0.0, "y": 747.59636803863657, "x": 707.76964647336627}, {"z": 0.0, "y": 720.09623894205390, "x": 660.13832379939413}, {"z": 0.0, "y": 672.46490249818441, "x": 687.63842904595026}]]}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Clinical Labs & Lab Support", "area_status": "Good", "creator": "amielkeKREU3", "level_name": "Level 2", "department": "CLINICAL SUPPORT", "area_sf": 21990.000000770597, "division": "Laboratory Services"}, "color": "#fae1d2", "id": "area_1228132", "geometry": [[{"z": 15.0, "y": 407.43821318009566, "x": 335.40012824505641}, {"z": 15.0, "y": 442.43821318009589, "x": 335.40012824505646}, {"z": 15.0, "y": 442.43821318009606, "x": 266.40012824052349}, {"z": 15.0, "y": 272.43821318009606, "x": 266.40012824052320}, {"z": 15.0, "y": 272.43821318009560, "x": 411.40012824505624}, {"z": 15.0, "y": 407.43821318009543, "x": 411.40012824505641}]]}, {"metadata": {"level_elevation": 30.0, "last_editor": "szhangGOODLOOKING", "room_name": "Post Procedural Observation (PPCU)", "area_status": "Good", "creator": "yhuangZZUZV", "level_name": "Level 3", "department": "DIAGNOSTIC AND TREATMENT", "area_sf": 25380.906068859320, "division": "Post Procedural Care Unit"}, "color": "#67a386", "id": "area_1264651", "geometry": [[{"z": 30.0, "y": 786.66994675221963, "x": 726.77984984272530}, {"z": 30.0, "y": 734.42028546572033, "x": 756.94620585155315}, {"z": 30.0, "y": 721.42921929202157, "x": 764.44660140399856}, {"z": 30.0, "y": 738.92927956360040, "x": 794.75741201188760}, {"z": 30.0, "y": 757.92932962691737, "x": 827.66626547137662}, {"z": 30.0, "y": 744.93896900840741, "x": 835.16630087136411}, {"z": 30.0, "y": 780.93913892839907, "x": 897.52003184030127}, {"z": 30.0, "y": 885.15069855689023, "x": 837.35308118706848}, {"z": 30.0, "y": 745.65010134295312, "x": 595.73247972836543}, {"z": 30.0, "y": 728.33037934259869, "x": 605.73208892114951}, {"z": 30.0, "y": 719.66985053338749, "x": 610.73227907969761}, {"z": 30.0, "y": 667.41995483035259, "x": 640.89896058782938}, {"z": 30.0, "y": 708.92015103101483, "x": 712.77895582547501}, {"z": 30.0, "y": 761.16993287460332, "x": 682.61253021297875}]]}, {"metadata": {"level_elevation": 0.0, "last_editor": "szhangGOODLOOKING", "room_name": "Mother/Baby Lobby", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 1", "department": "PUBLIC SUPPORT", "area_sf": 1694.3333333274086, "division": "Lobby"}, "color": "#fcf19c", "id": "area_1076980", "geometry": [[{"z": 0.0, "y": 496.43821318010453, "x": 615.40012824052349}, {"z": 0.0, "y": 496.43821318010458, "x": 579.40012824505618}, {"z": 0.0, "y": 496.43821318010475, "x": 541.73346157411709}, {"z": 0.0, "y": 473.43821318010487, "x": 541.73346157411709}, {"z": 0.0, "y": 473.43821318010470, "x": 577.40012824052360}, {"z": 0.0, "y": 473.43821318010453, "x": 615.40012824052349}]]}, {"metadata": {"level_elevation": 96.0, "last_editor": "szhangGOODLOOKING", "room_name": "Mother/Baby Lobby", "area_status": "Good", "creator": "mfungSTW3E", "level_name": "Level 7", "department": "PUBLIC SUPPORT", "area_sf": 4884.0041308754471, "division": "Lobby"}, "color": "#fcf19c", "id": "area_1407182", "geometry": [[{"z": 96.0, "y": 496.43821318009543, "x": 487.40023989033841}, {"z": 96.0, "y": 496.43821318009543, "x": 482.40012824505629}, {"z": 96.0, "y": 496.43821318009543, "x": 355.40012824505646}, {"z": 96.0, "y": 459.43821318009560, "x": 355.40012824505641}, {"z": 96.0, "y": 459.43821318009532, "x": 443.06679490719034}, {"z": 96.0, "y": 459.43821318009532, "x": 443.40012824505641}, {"z": 96.0, "y": 459.43821318009509, "x": 487.40023989033836}]]}, {"metadata": {"level_elevation": 30.0, "last_editor": "szhangGOODLOOKING", "room_name": "Dialysis (8 Chairs + 2 ISO Rooms)", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 3", "department": "DIAGNOSTIC AND TREATMENT", "area_sf": 4299.9340259166784, "division": "Dialysis"}, "color": "#93a63f", "id": "area_1403744", "geometry": [[{"z": 30.0, "y": 742.43821318009395, "x": 505.06679489571025}, {"z": 30.0, "y": 670.21087837656148, "x": 505.06679489571013}, {"z": 30.0, "y": 728.33037934259869, "x": 605.73208892114951}, {"z": 30.0, "y": 745.65010134295312, "x": 595.73247972836555}, {"z": 30.0, "y": 742.43821318009373, "x": 590.16936125269308}]]}, {"metadata": {"level_elevation": -22.0, "last_editor": "szhangGOODLOOKING", "room_name": "Buildings & Grounds", "area_status": "Not Placed", "creator": "Vivian.ZhanS5ZQG", "level_name": "Level B1", "department": "BUILDING SUPPORT", "area_sf": 0.0, "division": "Building & Staff Support"}, "color": "#c1b493", "id": "area_1340680", "geometry": []}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Extended Clinical Team", "area_status": "Not Placed", "creator": "amielkeKREU3", "level_name": "Level 2", "department": "ADMINISTRATION & STAFF SUPPORT", "area_sf": 0.0, "division": "Hospital Operations and Staff Support"}, "color": "#e0a40e", "id": "area_1229105", "geometry": []}, {"metadata": {"level_elevation": -22.0, "last_editor": "szhangGOODLOOKING", "room_name": "Dietary Kitchen", "area_status": "Good", "creator": "Vivian.ZhanS5ZQG", "level_name": "Level B1", "department": "BUILDING SUPPORT", "area_sf": 19720.910822420636, "division": "Building & Staff Support"}, "color": "#c1b493", "id": "area_1340768", "geometry": [[{"z": -22.0, "y": 550.43821318010464, "x": 577.40012824052371}, {"z": -22.0, "y": 424.27154651342624, "x": 577.40012824052349}, {"z": -22.0, "y": 411.43821318009503, "x": 577.40012824052337}, {"z": -22.0, "y": 411.43821318009486, "x": 641.40012822634503}, {"z": -22.0, "y": 615.74677770729659, "x": 641.40012822634526}, {"z": -22.0, "y": 619.94811656036984, "x": 648.67706057968144}, {"z": -22.0, "y": 648.52756940613949, "x": 632.17670578588366}, {"z": -22.0, "y": 635.43821318010464, "x": 609.50527576402419}, {"z": -22.0, "y": 635.43821318010498, "x": 517.06679490745353}, {"z": -22.0, "y": 550.43821318010498, "x": 517.06679490745319}]]}, {"metadata": {"level_elevation": 0.0, "last_editor": "szhangGOODLOOKING", "room_name": "Retail Pharmacy", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 1", "department": "CLINICAL SUPPORT", "area_sf": 3933.3333333227747, "division": "CSPD & Pharmacy"}, "color": "#fae1d2", "id": "area_1077009", "geometry": [[{"z": 0.0, "y": 553.43821318010464, "x": 579.40012824505629}, {"z": 0.0, "y": 553.43821318010453, "x": 615.40012824052360}, {"z": 0.0, "y": 593.43821318010475, "x": 615.40012824052360}, {"z": 0.0, "y": 593.43821318010509, "x": 517.06679490745307}, {"z": 0.0, "y": 553.43821318010498, "x": 517.06679490745296}]]}, {"metadata": {"level_elevation": 156.0, "last_editor": "amielkeKREU3", "room_name": "Patient Units_Med Surg", "area_status": "Not Placed", "creator": "Vivian.ZhanS5ZQG", "level_name": "Level 11", "department": "INPATIENT CARE UNIT", "area_sf": 0.0, "division": "Licensed Beds"}, "color": "#6fb8db", "id": "area_1321327", "geometry": []}, {"metadata": {"level_elevation": 171.0, "last_editor": "amielkeKREU3", "room_name": "Patient Units_ICU", "area_status": "Not Placed", "creator": "szhangGOODLOOKING", "level_name": "Level 12", "department": "INPATIENT CARE UNIT", "area_sf": 0.0, "division": "Licensed Beds"}, "color": "#6fb8db", "id": "area_1076860", "geometry": []}, {"metadata": {"level_elevation": 96.0, "last_editor": "szhangGOODLOOKING", "room_name": "PICU", "area_status": "Good", "creator": "amielkeKREU3", "level_name": "Level 7", "department": "INPATIENT CARE UNIT", "area_sf": 43895.744139363873, "division": "Licensed Beds - Mother/Baby + Peds"}, "color": "#389ea3", "id": "area_1152013", "geometry": [[{"z": 96.0, "y": 743.05228699815052, "x": 255.40012824505683}, {"z": 96.0, "y": 459.43821318009594, "x": 255.40012824505638}, {"z": 96.0, "y": 459.43821318009560, "x": 355.40012824505641}, {"z": 96.0, "y": 496.43821318009543, "x": 355.40012824505646}, {"z": 96.0, "y": 643.05228699815018, "x": 355.40012824505669}, {"z": 96.0, "y": 643.05228699815018, "x": 482.40012824505635}, {"z": 96.0, "y": 644.76510225473100, "x": 482.40012824505635}, {"z": 96.0, "y": 644.76510225473100, "x": 487.40023989033864}, {"z": 96.0, "y": 644.76510225473100, "x": 491.40023989033864}, {"z": 96.0, "y": 644.76510225473089, "x": 513.65023989033898}, {"z": 96.0, "y": 683.76510225473089, "x": 513.65023989033909}, {"z": 96.0, "y": 683.76510225473089, "x": 509.65023989033909}, {"z": 96.0, "y": 743.05228699814802, "x": 509.65023989033904}]]}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Anesthesiology Offices", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 2", "department": "ADMINISTRATION & STAFF SUPPORT", "area_sf": 3569.2963090972771, "division": "Departmental Offices"}, "color": "#e0a40e", "id": "area_1347269", "geometry": [[{"z": 15.0, "y": 405.38610680092154, "x": 597.40012824505618}, {"z": 15.0, "y": 407.43821318009492, "x": 597.40012824505629}, {"z": 15.0, "y": 407.43821318009498, "x": 579.40012824505641}, {"z": 15.0, "y": 407.43821318009509, "x": 547.40012824505629}, {"z": 15.0, "y": 336.05228699814955, "x": 547.40012824505618}, {"z": 15.0, "y": 336.05228699814944, "x": 597.40012824505618}]]}, {"metadata": {"level_elevation": 48.0, "last_editor": "szhangGOODLOOKING", "room_name": "Bronch/Endo", "area_status": "Good", "creator": "yhuangZZUZV", "level_name": "Level 4", "department": "DIAGNOSTIC AND TREATMENT", "area_sf": 19635.916666929177, "division": "Procedure"}, "color": "#93a63f", "id": "area_1264714", "geometry": [[{"z": 48.0, "y": 320.02154651343267, "x": 597.40012824505618}, {"z": 48.0, "y": 320.02154651343358, "x": 256.40012824052326}, {"z": 48.0, "y": 262.43821318009600, "x": 256.40012824052314}, {"z": 48.0, "y": 262.43821318009486, "x": 597.40012824505607}]]}, {"metadata": {"level_elevation": -22.0, "last_editor": "szhangGOODLOOKING", "room_name": "Material Automation (AGV/AMR)", "area_status": "Good", "creator": "Vivian.ZhanS5ZQG", "level_name": "Level B1", "department": "BUILDING SUPPORT", "area_sf": 2324.9999999999563, "division": "Materials Managament"}, "color": "#c1b493", "id": "area_1340687", "geometry": [[{"z": -22.0, "y": 664.93821318009577, "x": 369.40012822634532}, {"z": -22.0, "y": 664.93821318009566, "x": 399.40012822634526}, {"z": -22.0, "y": 742.43821318009441, "x": 399.40012822634537}, {"z": -22.0, "y": 742.43821318009452, "x": 369.40012822634543}]]}, {"metadata": {"level_elevation": 0.0, "last_editor": "szhangGOODLOOKING", "room_name": "Patient Units_Observation", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 1", "department": "EMERGENCY CARE SERVICES", "area_sf": 14303.283963344114, "division": "Observation"}, "color": "#9e94d3", "id": "area_1076871", "geometry": [[{"z": 0.0, "y": 519.93821318009611, "x": 266.40012824052366}, {"z": 0.0, "y": 519.93821318009589, "x": 373.94361668671991}, {"z": 0.0, "y": 652.93821318009577, "x": 373.94361668672030}, {"z": 0.0, "y": 652.93821318009611, "x": 266.40012824052388}]]}, {"metadata": {"level_elevation": 0.0, "last_editor": "szhangGOODLOOKING", "room_name": "Treatment positions", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 1", "department": "EMERGENCY CARE SERVICES", "area_sf": 71709.340425574075, "division": "Emergency Department"}, "color": "#de5446", "id": "area_1076869", "geometry": [[{"z": 0.0, "y": 519.93821318009589, "x": 373.94361668671991}, {"z": 0.0, "y": 519.93821318009611, "x": 266.40012824052366}, {"z": 0.0, "y": 272.43821318009606, "x": 266.40012824052326}, {"z": 0.0, "y": 272.43821318009543, "x": 469.40012824505584}, {"z": 0.0, "y": 284.43821318009543, "x": 469.40012824505590}, {"z": 0.0, "y": 407.43821318009537, "x": 469.40012824505607}, {"z": 0.0, "y": 407.43821318009526, "x": 505.06679490745296}, {"z": 0.0, "y": 653.05228699814950, "x": 505.06679490745358}, {"z": 0.0, "y": 653.05228699815007, "x": 373.94361668672030}, {"z": 0.0, "y": 652.93821318009577, "x": 373.94361668672030}]]}, {"metadata": {"level_elevation": 0.0, "last_editor": "szhangGOODLOOKING", "room_name": "Waste Management", "area_status": "Not Placed", "creator": "amielkeKREU3", "level_name": "Level 1", "department": "BUILDING SUPPORT", "area_sf": 0.0, "division": "Materials Managament"}, "color": "#c1b493", "id": "area_1297902", "geometry": []}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Training and Simulation", "area_status": "Not Placed", "creator": "amielkeKREU3", "level_name": "Level 2", "department": "ADMINISTRATION & STAFF SUPPORT", "area_sf": 0.0, "division": "Hospital Operations and Staff Support"}, "color": "#e0a40e", "id": "area_1229118", "geometry": []}, {"metadata": {"level_elevation": 0.0, "last_editor": "szhangGOODLOOKING", "room_name": "Linen Services", "area_status": "Good", "creator": "amielkeKREU3", "level_name": "Level 1", "department": "BUILDING SUPPORT", "area_sf": 4633.3269282039182, "division": "Materials Managament"}, "color": "#c1b493", "id": "area_1165258", "geometry": [[{"z": 0.0, "y": 761.43586138148680, "x": 473.80047230271219}, {"z": 0.0, "y": 761.43586126514219, "x": 473.80047236988383}, {"z": 0.0, "y": 681.20987731596688, "x": 520.11901395772747}, {"z": 0.0, "y": 706.20999531608015, "x": 563.42021601969566}, {"z": 0.0, "y": 786.44678705023591, "x": 517.06133897303289}]]}, {"metadata": {"level_elevation": 0.0, "last_editor": "szhangGOODLOOKING", "room_name": "Lobby Cafe", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 1", "department": "PUBLIC SUPPORT", "area_sf": 1331.9999998322237, "division": "Cafe & Retail"}, "color": "#fcf19c", "id": "area_1077000", "geometry": [[{"z": 0.0, "y": 496.43821318010481, "x": 579.40012824505618}, {"z": 0.0, "y": 496.43821318010453, "x": 615.40012824052349}, {"z": 0.0, "y": 533.43821318010453, "x": 615.40012824052360}, {"z": 0.0, "y": 533.43821318010464, "x": 579.40012824505629}]]}, {"metadata": {"level_elevation": -22.0, "last_editor": "szhangGOODLOOKING", "room_name": "Patient Transport", "area_status": "Good", "creator": "Vivian.ZhanS5ZQG", "level_name": "Level B1", "department": "BUILDING SUPPORT", "area_sf": 3087.3472553789034, "division": "Materials Managament"}, "color": "#c1b493", "id": "area_1340693", "geometry": [[{"z": -22.0, "y": 630.18135380626018, "x": 505.06679490745353}, {"z": -22.0, "y": 652.93821318009509, "x": 505.06679490745358}, {"z": -22.0, "y": 652.93821318009566, "x": 369.40012822634526}, {"z": -22.0, "y": 630.18135380626074, "x": 369.40012822634520}]]}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Main Pharmacy", "area_status": "Good", "creator": "amielkeKREU3", "level_name": "Level 2", "department": "CLINICAL SUPPORT", "area_sf": 13824.000000435124, "division": "CSPD & Pharmacy"}, "color": "#fae1d2", "id": "area_1228146", "geometry": [[{"z": 15.0, "y": 580.43821318009577, "x": 335.40012824505675}, {"z": 15.0, "y": 580.43821318009566, "x": 410.40012824505658}, {"z": 15.0, "y": 620.79115435668291, "x": 410.40012824505664}, {"z": 15.0, "y": 676.43821318009543, "x": 410.40012824505675}, {"z": 15.0, "y": 676.43821318009600, "x": 266.40012824052388}, {"z": 15.0, "y": 580.43821318009600, "x": 266.40012824052371}]]}, {"metadata": {"level_elevation": 0.0, "last_editor": "szhangGOODLOOKING", "room_name": "Cafeteria", "area_status": "Good", "creator": "cfleetwoodACGCC", "level_name": "Level 1", "department": "PUBLIC SUPPORT", "area_sf": 16688.087508689168, "division": "Cafe & Retail"}, "color": "#f8df24", "id": "area_1077020", "geometry": [[{"z": 0.0, "y": 694.82457504309366, "x": 806.36488025656365}, {"z": 0.0, "y": 684.82460589739628, "x": 789.04453462502170}, {"z": 0.0, "y": 646.10358192198737, "x": 811.40012824052269}, {"z": 0.0, "y": 471.43821318009469, "x": 811.40012824052246}, {"z": 0.0, "y": 471.43821318009446, "x": 881.40012824052314}, {"z": 0.0, "y": 665.45411178228926, "x": 881.40012824052349}, {"z": 0.0, "y": 719.97320761873368, "x": 849.92331549015171}]]}, {"metadata": {"level_elevation": 0.0, "last_editor": "szhangGOODLOOKING", "room_name": "Clean Dock + Receiving", "area_status": "Good", "creator": "amielkeKREU3", "level_name": "Level 1", "department": "BUILDING SUPPORT", "area_sf": 8061.9869223776659, "division": "Materials Managament"}, "color": "#ad9c71", "id": "area_1297904", "geometry": [[{"z": 0.0, "y": 749.71017977793497, "x": 638.76427148003961}, {"z": 0.0, "y": 829.94699236555425, "x": 592.40543055240732}, {"z": 0.0, "y": 786.43597938160019, "x": 517.10167436468043}, {"z": 0.0, "y": 786.43597926525558, "x": 517.10167443185208}, {"z": 0.0, "y": 706.20999531608004, "x": 563.42021601969577}]]}, {"metadata": {"level_elevation": 15.0, "last_editor": "szhangGOODLOOKING", "room_name": "Public Circulation", "area_status": "Not Placed", "creator": "szhangGOODLOOKING", "level_name": "Level 2", "department": "BUILDING SUPPORT (Non Departmental)", "area_sf": 0.0, "division": "Building Support (Non Departmental)"}, "color": "#fff8dd", "id": "area_1242074", "geometry": []}]</script>
+</div>
         <div class="online-dashboard-note">
             <div class="dashboard-link-container">
                 <div class="dashboard-link-item">
@@ -7376,41 +7616,61 @@ body {
         </div>
     </header>
     
-    <div class="viewer3d-section">
-        <h2>🏗️ 3D Area Geometry Viewer</h2>
-        <div class="viewer3d-controls">
+    
+    <div class="viewer-section" id="viewer-section-DGSF_Scheme_Opt1">
+        <h2>🏗️ Area Geometry Viewers</h2>
+        <div class="viewer-controls">
             <button class="control-btn active" data-mode="2d">2D Floor Plan</button>
             <button class="control-btn" data-mode="3d">3D Extrusion</button>
-            <select id="level-selector" class="control-select">
+            <select class="control-select" id="level-selector-DGSF_Scheme_Opt1">
                 <option value="all">Level: All Levels</option>
             </select>
-            <select id="department-selector" class="control-select">
+            <select class="control-select" id="department-selector-DGSF_Scheme_Opt1">
                 <option value="all">Department: All Departments</option>
             </select>
-            <button class="control-btn" data-mode="target-overlay">Show Target Overlay</button>
-            <button class="control-btn" data-mode="reset">Reset Camera</button>
-            <button class="control-btn" data-mode="zoom">Zoom to Fit</button>
-            <button class="control-btn" data-mode="animate">Animate</button>
+            <button class="control-btn" data-action="zoom-fit">Zoom to Fit</button>
+            <button class="control-btn" data-action="reset-camera">Reset Camera</button>
+            <div class="control-slider">
+                <label>Explode:</label>
+                <input type="range" id="explode-slider-DGSF_Scheme_Opt1" min="0" max="100" value="0">
+                <span id="explode-value-DGSF_Scheme_Opt1">0%</span>
+            </div>
         </div>
-        <div class="viewer3d-instructions">
-            <span>Right-Click: Orbit | Shift+Right: Pan | Scroll: Zoom | Double-Click: Select Area</span>
-        </div>
-        <div class="viewer3d-container">
-            <canvas id="viewer3d-canvas"></canvas>
-            <div class="viewer3d-info" id="viewer3d-info">
-                <div class="info-panel">
-                    <h4>3D Area Geometry</h4>
+        <div class="viewer-container">
+            <div class="viewer-panel">
+                <h3>2D Floor Plan</h3>
+                <canvas id="viewer2d-canvas-DGSF_Scheme_Opt1" class="viewer-canvas"></canvas>
+                <div class="viewer-info" id="viewer2d-info-DGSF_Scheme_Opt1">
+                    <h4>2D Viewer</h4>
                     <p>Loading area data...</p>
+                </div>
+                <div class="viewer-legend" id="viewer2d-legend-DGSF_Scheme_Opt1">
+                    <h4>Legend</h4>
+                    <div class="legend-items">
+                        <!-- Dynamic legend will be generated here -->
+                    </div>
+                </div>
+            </div>
+            <div class="viewer-panel">
+                <h3>3D Extrusion</h3>
+                <canvas id="viewer3d-canvas-DGSF_Scheme_Opt1" class="viewer-canvas"></canvas>
+                <div class="viewer-info" id="viewer3d-info-DGSF_Scheme_Opt1">
+                    <h4>3D Viewer</h4>
+                    <p>Loading area data...</p>
+                </div>
+                <div class="viewer-legend" id="viewer3d-legend-DGSF_Scheme_Opt1">
+                    <h4>Legend</h4>
+                    <div class="legend-items">
+                        <!-- Dynamic legend will be generated here -->
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="viewer3d-legend">
-            <div class="legend-title">View Legend</div>
-            <div class="legend-items" id="viewer3d-legend">
-                <!-- Dynamic legend will be generated here -->
-            </div>
+        <div class="viewer-instructions">
+            <p><strong>Controls:</strong> Right-Click: Orbit | Shift+Right: Pan | Scroll: Zoom | Double-Click: Select Area</p>
         </div>
     </div>
+
     
     <div class="department-summary-section">
         <h2>📊 Department Fulfillment Summary</h2>
@@ -11346,7 +11606,8 @@ body {
         <div class="area-scheme-badge">
             <span class="badge-label">Area Scheme</span>
             <span class="badge-value">DGSF Scheme_Opt2</span>
-        </div>
+        <script id="areaGeometry-DGSF_Scheme_Opt2" type="application/json">[]</script>
+</div>
         <div class="online-dashboard-note">
             <div class="dashboard-link-container">
                 <div class="dashboard-link-item">
@@ -11401,41 +11662,61 @@ body {
         </div>
     </header>
     
-    <div class="viewer3d-section">
-        <h2>🏗️ 3D Area Geometry Viewer</h2>
-        <div class="viewer3d-controls">
+    
+    <div class="viewer-section" id="viewer-section-DGSF_Scheme_Opt2">
+        <h2>🏗️ Area Geometry Viewers</h2>
+        <div class="viewer-controls">
             <button class="control-btn active" data-mode="2d">2D Floor Plan</button>
             <button class="control-btn" data-mode="3d">3D Extrusion</button>
-            <select id="level-selector" class="control-select">
+            <select class="control-select" id="level-selector-DGSF_Scheme_Opt2">
                 <option value="all">Level: All Levels</option>
             </select>
-            <select id="department-selector" class="control-select">
+            <select class="control-select" id="department-selector-DGSF_Scheme_Opt2">
                 <option value="all">Department: All Departments</option>
             </select>
-            <button class="control-btn" data-mode="target-overlay">Show Target Overlay</button>
-            <button class="control-btn" data-mode="reset">Reset Camera</button>
-            <button class="control-btn" data-mode="zoom">Zoom to Fit</button>
-            <button class="control-btn" data-mode="animate">Animate</button>
+            <button class="control-btn" data-action="zoom-fit">Zoom to Fit</button>
+            <button class="control-btn" data-action="reset-camera">Reset Camera</button>
+            <div class="control-slider">
+                <label>Explode:</label>
+                <input type="range" id="explode-slider-DGSF_Scheme_Opt2" min="0" max="100" value="0">
+                <span id="explode-value-DGSF_Scheme_Opt2">0%</span>
+            </div>
         </div>
-        <div class="viewer3d-instructions">
-            <span>Right-Click: Orbit | Shift+Right: Pan | Scroll: Zoom | Double-Click: Select Area</span>
-        </div>
-        <div class="viewer3d-container">
-            <canvas id="viewer3d-canvas"></canvas>
-            <div class="viewer3d-info" id="viewer3d-info">
-                <div class="info-panel">
-                    <h4>3D Area Geometry</h4>
+        <div class="viewer-container">
+            <div class="viewer-panel">
+                <h3>2D Floor Plan</h3>
+                <canvas id="viewer2d-canvas-DGSF_Scheme_Opt2" class="viewer-canvas"></canvas>
+                <div class="viewer-info" id="viewer2d-info-DGSF_Scheme_Opt2">
+                    <h4>2D Viewer</h4>
                     <p>Loading area data...</p>
+                </div>
+                <div class="viewer-legend" id="viewer2d-legend-DGSF_Scheme_Opt2">
+                    <h4>Legend</h4>
+                    <div class="legend-items">
+                        <!-- Dynamic legend will be generated here -->
+                    </div>
+                </div>
+            </div>
+            <div class="viewer-panel">
+                <h3>3D Extrusion</h3>
+                <canvas id="viewer3d-canvas-DGSF_Scheme_Opt2" class="viewer-canvas"></canvas>
+                <div class="viewer-info" id="viewer3d-info-DGSF_Scheme_Opt2">
+                    <h4>3D Viewer</h4>
+                    <p>Loading area data...</p>
+                </div>
+                <div class="viewer-legend" id="viewer3d-legend-DGSF_Scheme_Opt2">
+                    <h4>Legend</h4>
+                    <div class="legend-items">
+                        <!-- Dynamic legend will be generated here -->
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="viewer3d-legend">
-            <div class="legend-title">View Legend</div>
-            <div class="legend-items" id="viewer3d-legend">
-                <!-- Dynamic legend will be generated here -->
-            </div>
+        <div class="viewer-instructions">
+            <p><strong>Controls:</strong> Right-Click: Orbit | Shift+Right: Pan | Scroll: Zoom | Double-Click: Select Area</p>
         </div>
     </div>
+
     
     <div class="department-summary-section">
         <h2>📊 Department Fulfillment Summary</h2>
@@ -13778,7 +14059,7 @@ body {
 
         
         <footer class="report-footer">
-            <p>Report generated by Monitor Area System | 2025-10-28 15:50:46</p>
+            <p>Report generated by Monitor Area System | 2025-10-28 16:26:10</p>
             <p style="margin-top: 10px; font-size: 0.9em; color: #9ca3af;">
                 🦆 Powered by <strong style="color: #60a5fa;">EnneadTab</strong> | 
                 For feature requests, contact <strong style="color: #60a5fa;">Sen Zhang</strong>
@@ -15890,6 +16171,48 @@ function initializeSchemeVisualizations(schemeElement) {
     if (buildingSection) {
         createBuildingSection(buildingSection);
     }
+    
+    // Initialize 2D viewer if present
+    var viewer2dCanvas = schemeElement.querySelector('[id^="viewer2d-canvas"]');
+    if (viewer2dCanvas) {
+        var schemeId = schemeElement.id.replace('scheme-', '');
+        console.log('Initializing 2D viewer for scheme:', schemeId);
+        
+        // Clean up existing viewer if present
+        var existingViewer = window['viewer2d_' + schemeId];
+        if (existingViewer) {
+            existingViewer.destroy();
+        }
+        
+        // Initialize new 2D viewer
+        try {
+            initialize2DViewer(schemeId);
+            console.log('2D viewer initialized successfully');
+        } catch (error) {
+            console.error('Error initializing 2D viewer:', error);
+        }
+    }
+    
+    // Initialize 3D viewer if present
+    var viewer3dCanvas = schemeElement.querySelector('[id^="viewer3d-canvas"]');
+    if (viewer3dCanvas) {
+        var schemeId = schemeElement.id.replace('scheme-', '');
+        console.log('Initializing 3D viewer for scheme:', schemeId);
+        
+        // Clean up existing viewer if present
+        var existingViewer = window['viewer3d_' + schemeId];
+        if (existingViewer) {
+            existingViewer.destroy();
+        }
+        
+        // Initialize new 3D viewer
+        try {
+            initialize3DViewer(schemeId);
+            console.log('3D viewer initialized successfully');
+        } catch (error) {
+            console.error('Error initializing 3D viewer:', error);
+        }
+    }
 
     console.log('Visualizations initialized for scheme');
 }
@@ -16287,6 +16610,1060 @@ function show3DAreaInfo(areaData) {
 }
 
 
+
+/**
+ * 2D Area Viewer - Orthographic camera with shape rendering and isolation controls
+ * Uses Three.js for consistent rendering with 3D viewer
+ */
+
+class AreaViewer2D {
+    constructor(canvasId, schemeId) {
+        this.canvasId = canvasId;
+        this.schemeId = schemeId;
+        this.canvas = document.getElementById(canvasId);
+        this.scene = null;
+        this.camera = null;
+        this.renderer = null;
+        this.controls = null;
+        this.geometryData = [];
+        this.shapes = [];
+        this.selectedShape = null;
+        this.isolatedDepartment = null;
+        this.isolatedLevel = null;
+        this.explodeAmount = 0;
+        this.bounds = { min: { x: Infinity, y: Infinity }, max: { x: -Infinity, y: -Infinity } };
+        
+        this.init();
+    }
+    
+    init() {
+        if (!this.canvas) {
+            console.error('Canvas not found:', this.canvasId);
+            return;
+        }
+        
+        // Initialize Three.js scene
+        this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(0xf9fafb);
+        
+        // Setup orthographic camera
+        const width = this.canvas.clientWidth;
+        const height = this.canvas.clientHeight;
+        const aspect = width / height;
+        
+        this.camera = new THREE.OrthographicCamera(
+            -1000 * aspect, 1000 * aspect,
+            1000, -1000,
+            0.1, 10000
+        );
+        this.camera.position.set(0, 0, 1000);
+        this.camera.lookAt(0, 0, 0);
+        
+        // Setup renderer
+        this.renderer = new THREE.WebGLRenderer({ 
+            canvas: this.canvas, 
+            antialias: true,
+            alpha: true
+        });
+        this.renderer.setSize(width, height);
+        this.renderer.setPixelRatio(window.devicePixelRatio);
+        
+        // Setup controls (pan and zoom only for 2D)
+        this.controls = new THREE.OrbitControls(this.camera, this.canvas);
+        this.controls.enableRotate = false; // Disable rotation for 2D
+        this.controls.enableDamping = true;
+        this.controls.dampingFactor = 0.1;
+        this.controls.screenSpacePanning = true;
+        
+        // Load geometry data
+        this.loadGeometryData();
+        
+        // Setup event listeners
+        this.setupEventListeners();
+        
+        // Start render loop
+        this.animate();
+        
+        console.log('2D Viewer initialized for scheme:', this.schemeId);
+    }
+    
+    loadGeometryData() {
+        try {
+            const scriptElement = document.getElementById(`areaGeometry-${this.schemeId}`);
+            if (scriptElement) {
+                this.geometryData = JSON.parse(scriptElement.textContent);
+                this.processGeometryData();
+                this.updateLegend();
+            } else {
+                console.warn('Geometry data not found for scheme:', this.schemeId);
+            }
+        } catch (error) {
+            console.error('Error loading geometry data:', error);
+        }
+    }
+    
+    processGeometryData() {
+        // Clear existing shapes
+        this.shapes.forEach(shape => {
+            this.scene.remove(shape);
+        });
+        this.shapes = [];
+        
+        // Reset bounds
+        this.bounds = { min: { x: Infinity, y: Infinity }, max: { x: -Infinity, y: -Infinity } };
+        
+        // Process each area
+        this.geometryData.forEach((areaData, index) => {
+            if (areaData.geometry && areaData.geometry.length > 0) {
+                const shape = this.createAreaShape(areaData, index);
+                if (shape) {
+                    this.scene.add(shape);
+                    this.shapes.push(shape);
+                    
+                    // Update bounds
+                    this.updateBounds(areaData.geometry);
+                }
+            }
+        });
+        
+        // Update camera to fit all shapes
+        this.fitToBounds();
+        
+        console.log(`Processed ${this.shapes.length} area shapes`);
+    }
+    
+    createAreaShape(areaData, index) {
+        const group = new THREE.Group();
+        
+        // Process each loop (exterior + voids)
+        areaData.geometry.forEach((loop, loopIndex) => {
+            if (loop.length < 3) return; // Need at least 3 points for a polygon
+            
+            // Convert points to Three.js format
+            const points = loop.map(pt => new THREE.Vector3(pt.x, pt.y, 0));
+            
+            // Create shape geometry
+            const shape = new THREE.Shape();
+            shape.moveTo(points[0].x, points[0].y);
+            
+            for (let i = 1; i < points.length; i++) {
+                shape.lineTo(points[i].x, points[i].y);
+            }
+            shape.closePath();
+            
+            // Create geometry
+            const geometry = new THREE.ShapeGeometry(shape);
+            
+            // Create material
+            const material = new THREE.MeshBasicMaterial({
+                color: areaData.color,
+                transparent: true,
+                opacity: 0.7,
+                side: THREE.DoubleSide
+            });
+            
+            // Create mesh
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.userData = {
+                areaData: areaData,
+                areaIndex: index,
+                loopIndex: loopIndex,
+                isExterior: loopIndex === 0
+            };
+            
+            group.add(mesh);
+        });
+        
+        return group;
+    }
+    
+    updateBounds(geometry) {
+        geometry.forEach(loop => {
+            loop.forEach(pt => {
+                this.bounds.min.x = Math.min(this.bounds.min.x, pt.x);
+                this.bounds.min.y = Math.min(this.bounds.min.y, pt.y);
+                this.bounds.max.x = Math.max(this.bounds.max.x, pt.x);
+                this.bounds.max.y = Math.max(this.bounds.max.y, pt.y);
+            });
+        });
+    }
+    
+    fitToBounds() {
+        if (this.bounds.min.x === Infinity) return;
+        
+        const width = this.bounds.max.x - this.bounds.min.x;
+        const height = this.bounds.max.y - this.bounds.min.y;
+        const centerX = (this.bounds.min.x + this.bounds.max.x) / 2;
+        const centerY = (this.bounds.min.y + this.bounds.max.y) / 2;
+        
+        // Add padding
+        const padding = Math.max(width, height) * 0.1;
+        const maxDim = Math.max(width, height) + padding * 2;
+        
+        // Update camera
+        const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
+        this.camera.left = -maxDim * aspect / 2;
+        this.camera.right = maxDim * aspect / 2;
+        this.camera.top = maxDim / 2;
+        this.camera.bottom = -maxDim / 2;
+        this.camera.updateProjectionMatrix();
+        
+        // Center camera
+        this.camera.position.set(centerX, centerY, 1000);
+        this.camera.lookAt(centerX, centerY, 0);
+        
+        // Update controls target
+        this.controls.target.set(centerX, centerY, 0);
+        this.controls.update();
+    }
+    
+    setupEventListeners() {
+        // Mouse events for selection
+        this.canvas.addEventListener('click', (event) => this.onMouseClick(event));
+        this.canvas.addEventListener('mousemove', (event) => this.onMouseMove(event));
+        
+        // Control button events
+        this.setupControlListeners();
+        
+        // Window resize
+        window.addEventListener('resize', () => this.onWindowResize());
+    }
+    
+    setupControlListeners() {
+        // Level selector
+        const levelSelector = document.getElementById(`level-selector-${this.schemeId}`);
+        if (levelSelector) {
+            levelSelector.addEventListener('change', (event) => {
+                this.isolatedLevel = event.target.value === 'all' ? null : event.target.value;
+                this.updateIsolation();
+            });
+        }
+        
+        // Department selector
+        const deptSelector = document.getElementById(`department-selector-${this.schemeId}`);
+        if (deptSelector) {
+            deptSelector.addEventListener('change', (event) => {
+                this.isolatedDepartment = event.target.value === 'all' ? null : event.target.value;
+                this.updateIsolation();
+            });
+        }
+        
+        // Explode slider
+        const explodeSlider = document.getElementById(`explode-slider-${this.schemeId}`);
+        const explodeValue = document.getElementById(`explode-value-${this.schemeId}`);
+        if (explodeSlider && explodeValue) {
+            explodeSlider.addEventListener('input', (event) => {
+                this.explodeAmount = parseInt(event.target.value);
+                explodeValue.textContent = this.explodeAmount + '%';
+                this.updateExplode();
+            });
+        }
+        
+        // Control buttons
+        const buttons = this.canvas.parentElement.querySelectorAll('.control-btn');
+        buttons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                const action = event.target.dataset.action;
+                if (action === 'zoom-fit') {
+                    this.zoomToFit();
+                } else if (action === 'reset-camera') {
+                    this.resetCamera();
+                }
+            });
+        });
+    }
+    
+    onMouseClick(event) {
+        const mouse = new THREE.Vector2();
+        mouse.x = (event.clientX / this.canvas.clientWidth) * 2 - 1;
+        mouse.y = -(event.clientY / this.canvas.clientHeight) * 2 + 1;
+        
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(mouse, this.camera);
+        
+        const intersects = raycaster.intersectObjects(this.shapes, true);
+        
+        if (intersects.length > 0) {
+            const intersect = intersects[0];
+            const areaData = intersect.object.userData.areaData;
+            this.selectShape(intersect.object, areaData);
+        } else {
+            this.deselectShape();
+        }
+    }
+    
+    onMouseMove(event) {
+        // Highlight on hover (optional)
+        // Could add hover effects here
+    }
+    
+    selectShape(shape, areaData) {
+        // Deselect previous
+        this.deselectShape();
+        
+        // Select new shape
+        this.selectedShape = shape;
+        shape.material.color.setHex(0xff0000); // Red highlight
+        shape.material.opacity = 0.9;
+        
+        // Update info panel
+        this.updateInfoPanel(areaData);
+        
+        console.log('Selected area:', areaData.metadata);
+    }
+    
+    deselectShape() {
+        if (this.selectedShape) {
+            // Restore original color
+            const areaData = this.selectedShape.userData.areaData;
+            this.selectedShape.material.color.setHex(parseInt(areaData.color.replace('#', '0x')));
+            this.selectedShape.material.opacity = 0.7;
+            this.selectedShape = null;
+        }
+        
+        // Clear info panel
+        this.updateInfoPanel(null);
+    }
+    
+    updateInfoPanel(areaData) {
+        const infoPanel = document.getElementById(`viewer2d-info-${this.schemeId}`);
+        if (!infoPanel) return;
+        
+        if (areaData) {
+            const metadata = areaData.metadata;
+            infoPanel.innerHTML = `
+                <h4>Selected Area</h4>
+                <p><strong>Department:</strong> <span class="info-highlight">${metadata.department}</span></p>
+                <p><strong>Division:</strong> <span class="info-highlight">${metadata.division}</span></p>
+                <p><strong>Room:</strong> <span class="info-highlight">${metadata.room_name}</span></p>
+                <p><strong>Level:</strong> <span class="info-highlight">${metadata.level_name}</span></p>
+                <p><strong>Area:</strong> <span class="info-highlight">${metadata.area_sf.toFixed(0)} SF</span></p>
+                <p><strong>Status:</strong> <span class="info-highlight">${metadata.area_status}</span></p>
+            `;
+        } else {
+            infoPanel.innerHTML = `
+                <h4>2D Viewer</h4>
+                <p>Click on an area to view details</p>
+            `;
+        }
+    }
+    
+    updateIsolation() {
+        this.shapes.forEach(shape => {
+            const areaData = shape.userData.areaData;
+            const metadata = areaData.metadata;
+            
+            let isVisible = true;
+            let isWireframe = false;
+            
+            // Check level isolation
+            if (this.isolatedLevel && metadata.level_name !== this.isolatedLevel) {
+                isVisible = false;
+            }
+            
+            // Check department isolation
+            if (this.isolatedDepartment) {
+                if (metadata.department === this.isolatedDepartment) {
+                    isVisible = true;
+                } else {
+                    isVisible = true;
+                    isWireframe = true;
+                }
+            }
+            
+            // Apply visibility and wireframe
+            shape.visible = isVisible;
+            if (isVisible) {
+                shape.children.forEach(child => {
+                    if (child.material) {
+                        child.material.wireframe = isWireframe;
+                        child.material.opacity = isWireframe ? 0.3 : 0.7;
+                    }
+                });
+            }
+        });
+    }
+    
+    updateExplode() {
+        // For 2D viewer, explode could mean spreading shapes apart
+        // This is a simplified implementation
+        this.shapes.forEach((shape, index) => {
+            const areaData = shape.userData.areaData;
+            const metadata = areaData.metadata;
+            
+            // Simple explode: move shapes based on department
+            const explodeOffset = this.explodeAmount * 10; // Scale factor
+            const deptHash = this.hashString(metadata.department);
+            const offsetX = Math.sin(deptHash) * explodeOffset;
+            const offsetY = Math.cos(deptHash) * explodeOffset;
+            
+            shape.position.set(offsetX, offsetY, 0);
+        });
+    }
+    
+    hashString(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash; // Convert to 32-bit integer
+        }
+        return hash / 1000000; // Normalize
+    }
+    
+    updateLegend() {
+        const legendContainer = document.getElementById(`viewer2d-legend-${this.schemeId}`);
+        if (!legendContainer) return;
+        
+        const legendItems = legendContainer.querySelector('.legend-items');
+        if (!legendItems) return;
+        
+        // Get unique departments
+        const departments = [...new Set(this.geometryData.map(area => area.metadata.department))];
+        
+        legendItems.innerHTML = departments.map(dept => {
+            const areaData = this.geometryData.find(area => area.metadata.department === dept);
+            return `
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: ${areaData.color}"></div>
+                    <span class="legend-label">${dept}</span>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    zoomToFit() {
+        this.fitToBounds();
+    }
+    
+    resetCamera() {
+        this.camera.position.set(0, 0, 1000);
+        this.camera.lookAt(0, 0, 0);
+        this.controls.target.set(0, 0, 0);
+        this.controls.update();
+    }
+    
+    onWindowResize() {
+        const width = this.canvas.clientWidth;
+        const height = this.canvas.clientHeight;
+        
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+        
+        this.renderer.setSize(width, height);
+    }
+    
+    animate() {
+        requestAnimationFrame(() => this.animate());
+        
+        this.controls.update();
+        this.renderer.render(this.scene, this.camera);
+    }
+    
+    destroy() {
+        if (this.controls) {
+            this.controls.dispose();
+        }
+        if (this.renderer) {
+            this.renderer.dispose();
+        }
+        // Clean up event listeners
+        window.removeEventListener('resize', this.onWindowResize);
+    }
+}
+
+// Global function to initialize 2D viewer
+function initialize2DViewer(schemeId) {
+    const canvasId = `viewer2d-canvas-${schemeId}`;
+    const viewer = new AreaViewer2D(canvasId, schemeId);
+    
+    // Store reference globally for cleanup
+    window[`viewer2d_${schemeId}`] = viewer;
+    
+    return viewer;
+}
+
+/**
+ * 3D Area Viewer - Perspective camera with 3D extrusion and advanced controls
+ * Uses Three.js for 3D rendering with mouse controls and interactive features
+ */
+
+class AreaViewer3D {
+    constructor(canvasId, schemeId) {
+        this.canvasId = canvasId;
+        this.schemeId = schemeId;
+        this.canvas = document.getElementById(canvasId);
+        this.scene = null;
+        this.camera = null;
+        this.renderer = null;
+        this.controls = null;
+        this.geometryData = [];
+        this.shapes = [];
+        this.selectedShape = null;
+        this.isolatedDepartment = null;
+        this.isolatedLevel = null;
+        this.explodeAmount = 0;
+        this.bounds = { min: { x: Infinity, y: Infinity, z: Infinity }, max: { x: -Infinity, y: -Infinity, z: -Infinity } };
+        this.raycaster = new THREE.Raycaster();
+        this.mouse = new THREE.Vector2();
+        
+        this.init();
+    }
+    
+    init() {
+        if (!this.canvas) {
+            console.error('Canvas not found:', this.canvasId);
+            return;
+        }
+        
+        // Initialize Three.js scene
+        this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(0xf8fafc);
+        
+        // Add ambient light
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+        this.scene.add(ambientLight);
+        
+        // Add directional light
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(1000, 1000, 1000);
+        directionalLight.castShadow = true;
+        this.scene.add(directionalLight);
+        
+        // Setup perspective camera
+        const width = this.canvas.clientWidth;
+        const height = this.canvas.clientHeight;
+        
+        this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 10000);
+        this.camera.position.set(1000, 1000, 1000);
+        this.camera.lookAt(0, 0, 0);
+        
+        // Setup renderer
+        this.renderer = new THREE.WebGLRenderer({ 
+            canvas: this.canvas, 
+            antialias: true,
+            alpha: true
+        });
+        this.renderer.setSize(width, height);
+        this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        
+        // Setup controls (orbit, pan, zoom)
+        this.controls = new THREE.OrbitControls(this.camera, this.canvas);
+        this.controls.enableDamping = true;
+        this.controls.dampingFactor = 0.1;
+        this.controls.screenSpacePanning = false;
+        this.controls.minDistance = 100;
+        this.controls.maxDistance = 5000;
+        
+        // Load geometry data
+        this.loadGeometryData();
+        
+        // Setup event listeners
+        this.setupEventListeners();
+        
+        // Start render loop
+        this.animate();
+        
+        console.log('3D Viewer initialized for scheme:', this.schemeId);
+    }
+    
+    loadGeometryData() {
+        try {
+            const scriptElement = document.getElementById(`areaGeometry-${this.schemeId}`);
+            if (scriptElement) {
+                this.geometryData = JSON.parse(scriptElement.textContent);
+                this.processGeometryData();
+                this.updateLegend();
+            } else {
+                console.warn('Geometry data not found for scheme:', this.schemeId);
+            }
+        } catch (error) {
+            console.error('Error loading geometry data:', error);
+        }
+    }
+    
+    processGeometryData() {
+        // Clear existing shapes
+        this.shapes.forEach(shape => {
+            this.scene.remove(shape);
+        });
+        this.shapes = [];
+        
+        // Reset bounds
+        this.bounds = { min: { x: Infinity, y: Infinity, z: Infinity }, max: { x: -Infinity, y: -Infinity, z: -Infinity } };
+        
+        // Process each area
+        this.geometryData.forEach((areaData, index) => {
+            if (areaData.geometry && areaData.geometry.length > 0) {
+                const shape = this.createAreaShape3D(areaData, index);
+                if (shape) {
+                    this.scene.add(shape);
+                    this.shapes.push(shape);
+                    
+                    // Update bounds
+                    this.updateBounds3D(areaData.geometry, areaData.metadata.level_elevation);
+                }
+            }
+        });
+        
+        // Update camera to fit all shapes
+        this.fitToBounds3D();
+        
+        console.log(`Processed ${this.shapes.length} area shapes in 3D`);
+    }
+    
+    createAreaShape3D(areaData, index) {
+        const group = new THREE.Group();
+        const metadata = areaData.metadata;
+        const levelElevation = metadata.level_elevation || 0;
+        const extrusionHeight = 100; // Default height for 3D extrusion
+        
+        // Process each loop (exterior + voids)
+        areaData.geometry.forEach((loop, loopIndex) => {
+            if (loop.length < 3) return; // Need at least 3 points for a polygon
+            
+            // Convert points to Three.js format
+            const points = loop.map(pt => new THREE.Vector2(pt.x, pt.y));
+            
+            // Create shape geometry
+            const shape = new THREE.Shape();
+            shape.moveTo(points[0].x, points[0].y);
+            
+            for (let i = 1; i < points.length; i++) {
+                shape.lineTo(points[i].x, points[i].y);
+            }
+            shape.closePath();
+            
+            // Create extruded geometry
+            const extrudeSettings = {
+                depth: extrusionHeight,
+                bevelEnabled: false
+            };
+            
+            const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+            
+            // Position geometry at correct level elevation
+            geometry.translate(0, 0, levelElevation);
+            
+            // Create material
+            const material = new THREE.MeshLambertMaterial({
+                color: areaData.color,
+                transparent: true,
+                opacity: 0.8,
+                side: THREE.DoubleSide
+            });
+            
+            // Create mesh
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.userData = {
+                areaData: areaData,
+                areaIndex: index,
+                loopIndex: loopIndex,
+                isExterior: loopIndex === 0,
+                levelElevation: levelElevation,
+                extrusionHeight: extrusionHeight
+            };
+            
+            // Enable shadows
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            
+            group.add(mesh);
+        });
+        
+        return group;
+    }
+    
+    updateBounds3D(geometry, levelElevation) {
+        const extrusionHeight = 100;
+        
+        geometry.forEach(loop => {
+            loop.forEach(pt => {
+                this.bounds.min.x = Math.min(this.bounds.min.x, pt.x);
+                this.bounds.min.y = Math.min(this.bounds.min.y, pt.y);
+                this.bounds.min.z = Math.min(this.bounds.min.z, levelElevation);
+                this.bounds.max.x = Math.max(this.bounds.max.x, pt.x);
+                this.bounds.max.y = Math.max(this.bounds.max.y, pt.y);
+                this.bounds.max.z = Math.max(this.bounds.max.z, levelElevation + extrusionHeight);
+            });
+        });
+    }
+    
+    fitToBounds3D() {
+        if (this.bounds.min.x === Infinity) return;
+        
+        const width = this.bounds.max.x - this.bounds.min.x;
+        const height = this.bounds.max.y - this.bounds.min.y;
+        const depth = this.bounds.max.z - this.bounds.min.z;
+        const centerX = (this.bounds.min.x + this.bounds.max.x) / 2;
+        const centerY = (this.bounds.min.y + this.bounds.max.y) / 2;
+        const centerZ = (this.bounds.min.z + this.bounds.max.z) / 2;
+        
+        // Calculate distance for camera
+        const maxDim = Math.max(width, height, depth);
+        const distance = maxDim * 2;
+        
+        // Position camera
+        this.camera.position.set(
+            centerX + distance * 0.7,
+            centerY + distance * 0.7,
+            centerZ + distance * 0.7
+        );
+        this.camera.lookAt(centerX, centerY, centerZ);
+        
+        // Update controls target
+        this.controls.target.set(centerX, centerY, centerZ);
+        this.controls.update();
+    }
+    
+    setupEventListeners() {
+        // Mouse events for selection
+        this.canvas.addEventListener('click', (event) => this.onMouseClick(event));
+        this.canvas.addEventListener('mousemove', (event) => this.onMouseMove(event));
+        this.canvas.addEventListener('dblclick', (event) => this.onDoubleClick(event));
+        
+        // Control button events
+        this.setupControlListeners();
+        
+        // Window resize
+        window.addEventListener('resize', () => this.onWindowResize());
+    }
+    
+    setupControlListeners() {
+        // Level selector
+        const levelSelector = document.getElementById(`level-selector-${this.schemeId}`);
+        if (levelSelector) {
+            levelSelector.addEventListener('change', (event) => {
+                this.isolatedLevel = event.target.value === 'all' ? null : event.target.value;
+                this.updateIsolation();
+            });
+        }
+        
+        // Department selector
+        const deptSelector = document.getElementById(`department-selector-${this.schemeId}`);
+        if (deptSelector) {
+            deptSelector.addEventListener('change', (event) => {
+                this.isolatedDepartment = event.target.value === 'all' ? null : event.target.value;
+                this.updateIsolation();
+            });
+        }
+        
+        // Explode slider
+        const explodeSlider = document.getElementById(`explode-slider-${this.schemeId}`);
+        const explodeValue = document.getElementById(`explode-value-${this.schemeId}`);
+        if (explodeSlider && explodeValue) {
+            explodeSlider.addEventListener('input', (event) => {
+                this.explodeAmount = parseInt(event.target.value);
+                explodeValue.textContent = this.explodeAmount + '%';
+                this.updateExplode3D();
+            });
+        }
+        
+        // Control buttons
+        const buttons = this.canvas.parentElement.querySelectorAll('.control-btn');
+        buttons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                const action = event.target.dataset.action;
+                if (action === 'zoom-fit') {
+                    this.zoomToFit();
+                } else if (action === 'reset-camera') {
+                    this.resetCamera();
+                }
+            });
+        });
+    }
+    
+    onMouseClick(event) {
+        this.updateMousePosition(event);
+        
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        const intersects = this.raycaster.intersectObjects(this.shapes, true);
+        
+        if (intersects.length > 0) {
+            const intersect = intersects[0];
+            const areaData = intersect.object.userData.areaData;
+            this.selectShape(intersect.object, areaData);
+        } else {
+            this.deselectShape();
+        }
+    }
+    
+    onMouseMove(event) {
+        this.updateMousePosition(event);
+        
+        // Optional: Add hover effects
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        const intersects = this.raycaster.intersectObjects(this.shapes, true);
+        
+        // Could add hover highlighting here
+    }
+    
+    onDoubleClick(event) {
+        this.updateMousePosition(event);
+        
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        const intersects = this.raycaster.intersectObjects(this.shapes, true);
+        
+        if (intersects.length > 0) {
+            const intersect = intersects[0];
+            const areaData = intersect.object.userData.areaData;
+            this.showAreaPopup(areaData);
+        }
+    }
+    
+    updateMousePosition(event) {
+        const rect = this.canvas.getBoundingClientRect();
+        this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    }
+    
+    selectShape(shape, areaData) {
+        // Deselect previous
+        this.deselectShape();
+        
+        // Select new shape
+        this.selectedShape = shape;
+        
+        // Highlight selected shape
+        shape.children.forEach(child => {
+            if (child.material) {
+                child.material.color.setHex(0xff0000); // Red highlight
+                child.material.opacity = 0.9;
+            }
+        });
+        
+        // Update info panel
+        this.updateInfoPanel(areaData);
+        
+        console.log('Selected 3D area:', areaData.metadata);
+    }
+    
+    deselectShape() {
+        if (this.selectedShape) {
+            // Restore original color
+            const areaData = this.selectedShape.userData.areaData;
+            this.selectedShape.children.forEach(child => {
+                if (child.material) {
+                    child.material.color.setHex(parseInt(areaData.color.replace('#', '0x')));
+                    child.material.opacity = 0.8;
+                }
+            });
+            this.selectedShape = null;
+        }
+        
+        // Clear info panel
+        this.updateInfoPanel(null);
+    }
+    
+    showAreaPopup(areaData) {
+        const metadata = areaData.metadata;
+        
+        // Create popup element
+        const popup = document.createElement('div');
+        popup.className = 'area-popup';
+        popup.innerHTML = `
+            <div class="popup-content">
+                <h3>${metadata.room_name}</h3>
+                <p><strong>Department:</strong> ${metadata.department}</p>
+                <p><strong>Division:</strong> ${metadata.division}</p>
+                <p><strong>Level:</strong> ${metadata.level_name}</p>
+                <p><strong>Area:</strong> ${metadata.area_sf.toFixed(0)} SF</p>
+                <p><strong>Status:</strong> ${metadata.area_status}</p>
+                <p><strong>Creator:</strong> ${metadata.creator}</p>
+                <p><strong>Last Editor:</strong> ${metadata.last_editor}</p>
+                <button onclick="this.parentElement.parentElement.remove()">Close</button>
+            </div>
+        `;
+        
+        // Style the popup
+        popup.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            z-index: 1000;
+            max-width: 400px;
+        `;
+        
+        // Add to document
+        document.body.appendChild(popup);
+        
+        // Auto-remove after 10 seconds
+        setTimeout(() => {
+            if (popup.parentElement) {
+                popup.remove();
+            }
+        }, 10000);
+    }
+    
+    updateInfoPanel(areaData) {
+        const infoPanel = document.getElementById(`viewer3d-info-${this.schemeId}`);
+        if (!infoPanel) return;
+        
+        if (areaData) {
+            const metadata = areaData.metadata;
+            infoPanel.innerHTML = `
+                <h4>Selected Area</h4>
+                <p><strong>Department:</strong> <span class="info-highlight">${metadata.department}</span></p>
+                <p><strong>Division:</strong> <span class="info-highlight">${metadata.division}</span></p>
+                <p><strong>Room:</strong> <span class="info-highlight">${metadata.room_name}</span></p>
+                <p><strong>Level:</strong> <span class="info-highlight">${metadata.level_name}</span></p>
+                <p><strong>Elevation:</strong> <span class="info-highlight">${metadata.level_elevation.toFixed(1)}'</span></p>
+                <p><strong>Area:</strong> <span class="info-highlight">${metadata.area_sf.toFixed(0)} SF</span></p>
+                <p><strong>Status:</strong> <span class="info-highlight">${metadata.area_status}</span></p>
+            `;
+        } else {
+            infoPanel.innerHTML = `
+                <h4>3D Viewer</h4>
+                <p>Click on an area to view details</p>
+                <p>Double-click for popup information</p>
+            `;
+        }
+    }
+    
+    updateIsolation() {
+        this.shapes.forEach(shape => {
+            const areaData = shape.userData.areaData;
+            const metadata = areaData.metadata;
+            
+            let isVisible = true;
+            let isWireframe = false;
+            
+            // Check level isolation
+            if (this.isolatedLevel && metadata.level_name !== this.isolatedLevel) {
+                isVisible = false;
+            }
+            
+            // Check department isolation
+            if (this.isolatedDepartment) {
+                if (metadata.department === this.isolatedDepartment) {
+                    isVisible = true;
+                } else {
+                    isVisible = true;
+                    isWireframe = true;
+                }
+            }
+            
+            // Apply visibility and wireframe
+            shape.visible = isVisible;
+            if (isVisible) {
+                shape.children.forEach(child => {
+                    if (child.material) {
+                        child.material.wireframe = isWireframe;
+                        child.material.opacity = isWireframe ? 0.3 : 0.8;
+                    }
+                });
+            }
+        });
+    }
+    
+    updateExplode3D() {
+        // Group shapes by level for explode effect
+        const levelGroups = {};
+        
+        this.shapes.forEach(shape => {
+            const areaData = shape.userData.areaData;
+            const levelName = areaData.metadata.level_name;
+            
+            if (!levelGroups[levelName]) {
+                levelGroups[levelName] = [];
+            }
+            levelGroups[levelName].push(shape);
+        });
+        
+        // Apply explode effect
+        const levels = Object.keys(levelGroups);
+        const explodeOffset = this.explodeAmount * 20; // Scale factor
+        
+        levels.forEach((levelName, levelIndex) => {
+            const shapesInLevel = levelGroups[levelName];
+            const levelZOffset = levelIndex * explodeOffset;
+            
+            shapesInLevel.forEach(shape => {
+                const originalZ = shape.userData.levelElevation;
+                shape.position.z = originalZ + levelZOffset;
+            });
+        });
+    }
+    
+    updateLegend() {
+        const legendContainer = document.getElementById(`viewer3d-legend-${this.schemeId}`);
+        if (!legendContainer) return;
+        
+        const legendItems = legendContainer.querySelector('.legend-items');
+        if (!legendItems) return;
+        
+        // Get unique departments
+        const departments = [...new Set(this.geometryData.map(area => area.metadata.department))];
+        
+        legendItems.innerHTML = departments.map(dept => {
+            const areaData = this.geometryData.find(area => area.metadata.department === dept);
+            return `
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: ${areaData.color}"></div>
+                    <span class="legend-label">${dept}</span>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    zoomToFit() {
+        this.fitToBounds3D();
+    }
+    
+    resetCamera() {
+        this.camera.position.set(1000, 1000, 1000);
+        this.camera.lookAt(0, 0, 0);
+        this.controls.target.set(0, 0, 0);
+        this.controls.update();
+    }
+    
+    onWindowResize() {
+        const width = this.canvas.clientWidth;
+        const height = this.canvas.clientHeight;
+        
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+        
+        this.renderer.setSize(width, height);
+    }
+    
+    animate() {
+        requestAnimationFrame(() => this.animate());
+        
+        this.controls.update();
+        this.renderer.render(this.scene, this.camera);
+    }
+    
+    destroy() {
+        if (this.controls) {
+            this.controls.dispose();
+        }
+        if (this.renderer) {
+            this.renderer.dispose();
+        }
+        // Clean up event listeners
+        window.removeEventListener('resize', this.onWindowResize);
+    }
+}
+
+// Global function to initialize 3D viewer
+function initialize3DViewer(schemeId) {
+    const canvasId = `viewer3d-canvas-${schemeId}`;
+    const viewer = new AreaViewer3D(canvasId, schemeId);
+    
+    // Store reference globally for cleanup
+    window[`viewer3d_${schemeId}`] = viewer;
+    
+    return viewer;
+}
     </script>
 </body>
 </html>
