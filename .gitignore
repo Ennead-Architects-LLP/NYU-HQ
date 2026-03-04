@@ -72,3 +72,6 @@ sender/send_report_build.py
 sender/dist/
 sender/build/
 
+
+.vercel
+.env*.local
