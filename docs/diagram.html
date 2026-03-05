@@ -3,7 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NYU HQ • Data Flow Diagram</title>
+    <title>NYU HQ - Data Flow Diagram</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Data flow diagram for the NYU HQ project at Ennead Architects. Illustrates how Excel area requirements and Revit model data are synchronized." />
+    <meta name="author" content="Sen Zhang" />
+    <meta name="creator" content="Sen Zhang" />
+    <meta name="keywords" content="NYU, Ennead Architects, data flow, Revit, Excel, BIM, architecture, EnneadTab, diagram" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="NYU HQ - Data Flow Diagram" />
+    <meta property="og:description" content="Data flow diagram for the NYU HQ project at Ennead Architects." />
+    <meta property="og:site_name" content="EnneadTab NYU-HQ" />
+    <meta property="og:url" content="https://nyu-hq.vercel.app/diagram" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="NYU HQ - Data Flow Diagram" />
+    <meta name="twitter:description" content="Data flow diagram for the NYU HQ project at Ennead Architects." />
+    <meta name="twitter:creator" content="Sen Zhang" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://nyu-hq.vercel.app/diagram" />
+
+    <!-- Structured Data: JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "NYU HQ Data Flow Diagram",
+      "url": "https://nyu-hq.vercel.app/diagram",
+      "description": "Data flow diagram for the NYU HQ project at Ennead Architects.",
+      "creator": {
+        "@type": "Person",
+        "name": "Sen Zhang",
+        "jobTitle": "Computational BIM Developer",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "Ennead Architects"
+        }
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Ennead Architects"
+      }
+    }
+    </script>
     <!-- No external font dependencies; use system stack -->
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -352,6 +400,7 @@
             This diagram is illustrative. Partial rows from the Master Excel are first parsed into an internal <strong>TreeNode</strong> structure (Department → Division → Room). The report highlights any unmatched items and proposes parameter corrections on the Revit side; once aligned, the confirmed values are written to the Master Excel in the <strong>DESIGN</strong> column.
         </div>
     </div>
+    <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
 
